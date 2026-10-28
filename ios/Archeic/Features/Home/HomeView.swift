@@ -8,7 +8,6 @@ struct HomeView: View {
     @State private var media: [Media] = []
     @State private var collections: [Collection] = []
     @State private var spot = 0
-    @State private var settings = false
     @State private var viewing: Media?
     @State private var appeared = false
 
@@ -31,11 +30,15 @@ struct HomeView: View {
         .background(Theme.bg)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
-                Button { settings = true } label: { Image(systemName: "gearshape") }
+                Button {
+                    withAnimation(.easeOut(duration: 0.35)) { model.connected = false }
+                } label: {
+                    Image(systemName: "network.slash")
+                }
+                .accessibilityLabel("Disconnect")
             }
             ToolbarItem(placement: .topBarTrailing) { UploadButton() }
         }
-        .sheet(isPresented: $settings) { SettingsView() }
         .fullScreenCover(item: $viewing) { m in Viewer(items: media, start: m) }
         .task(id: model.version) { await load() }
         .task(id: featured.count) {

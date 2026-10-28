@@ -4,15 +4,14 @@ import SwiftUI
 struct ArcheicApp: App {
     @State private var client = Client()
     @State private var model = AppModel()
-    @State private var connected = false
 
     var body: some Scene {
         WindowGroup {
             Group {
-                if connected {
+                if model.connected {
                     RootView().transition(.opacity)
                 } else {
-                    ConnectView { withAnimation(.easeOut(duration: 0.35)) { connected = true } }
+                    ConnectView { withAnimation(.easeOut(duration: 0.35)) { model.connected = true } }
                 }
             }
                 .environment(client)
