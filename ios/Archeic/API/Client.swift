@@ -8,7 +8,12 @@ struct APIError: LocalizedError {
 @MainActor
 @Observable
 final class Client {
-    static let defaultServer = "https://172.20.10.8:8443"
+    static let knownServers = [
+        "https://192.168.1.165:8443",
+        "https://172.20.10.8:8443",
+        "https://192.168.100.147:8443",
+    ]
+    static let defaultServer = knownServers[0]
 
     var server: String {
         didSet { UserDefaults.standard.set(server, forKey: "server") }

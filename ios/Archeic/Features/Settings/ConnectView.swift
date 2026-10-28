@@ -8,7 +8,6 @@ struct ConnectView: View {
     @State private var address = ""
     @State private var error: String?
     @State private var connecting = false
-    @FocusState private var focused: Bool
 
     var body: some View {
         ZStack {
@@ -21,22 +20,26 @@ struct ConnectView: View {
                     .foregroundStyle(Theme.gradient)
                 Text("Where is your server?")
                     .font(.title3.weight(.semibold))
-                Text("archeic runs on your local network. Enter the address of the machine running it.")
+                Text("archeic runs on your local network. Pick the address of the machine running it.")
                     .font(.subheadline)
                     .foregroundStyle(Theme.muted)
 
-                HStack(spacing: 10) {
-                    Image(systemName: "network").foregroundStyle(Theme.muted)
-                    TextField("192.168.1.20 or https://192.168.1.20:8443", text: $address)
-                        .keyboardType(.URL)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
-                        .submitLabel(.go)
-                        .focused($focused)
-                        .onSubmit(connect)
+                Menu {
+                    Picker("Server", selection: $address) {
+                        ForEach(Client.knownServers, id: \.self) { s in
+                            Text(Self.host(s)).tag(s)
+                        }
+                    }
+                } label: {
+                    HStack(spacing: 10) {
+                        Image(systemName: "network").foregroundStyle(Theme.muted)
+                        Text(Self.host(address)).foregroundStyle(.white)
+                        Spacer()
+                        Image(systemName: "chevron.up.chevron.down").foregroundStyle(Theme.muted)
+                    }
+                    .padding(14)
+                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
                 }
-                .padding(14)
-                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
 
                 if let error {
                     Label(error, systemImage: "exclamationmark.triangle.fill")
@@ -60,10 +63,7 @@ struct ConnectView: View {
             .padding(24)
         }
         .background(Theme.bg)
-        .onAppear {
-            address = client.server
-            focused = true
-        }
+        .onAppear { address = Client.defaultServer }
     }
 
     private func connect() {
@@ -85,6 +85,10 @@ struct ConnectView: View {
             }
             connecting = false
         }
+    }
+
+    static func host(_ server: String) -> String {
+        URL(string: server)?.host() ?? server
     }
 
     static func normalize(_ raw: String) -> String {
