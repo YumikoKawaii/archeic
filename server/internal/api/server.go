@@ -13,7 +13,7 @@ import (
 
 type MediaRepository interface {
 	Create(ctx context.Context, m *store.Media) error
-	List(ctx context.Context, kind string) ([]store.Media, error)
+	List(ctx context.Context, f store.MediaFilter) ([]store.Media, error)
 	Get(ctx context.Context, id string) (*store.Media, error)
 	Delete(ctx context.Context, id string) error
 }
@@ -26,9 +26,21 @@ type CategoryRepository interface {
 	DeleteCategory(ctx context.Context, id string) error
 }
 
+type CollectionRepository interface {
+	CreateCollection(ctx context.Context, c *store.Collection) error
+	ListCollections(ctx context.Context, categoryID string, parentID *string) ([]store.Collection, error)
+	GetCollection(ctx context.Context, id string) (*store.Collection, error)
+	UpdateCollection(ctx context.Context, c *store.Collection) error
+	DeleteCollection(ctx context.Context, id string) error
+	AddItems(ctx context.Context, collectionID string, mediaIDs []string) error
+	RemoveItems(ctx context.Context, collectionID string, mediaIDs []string) error
+	MoveItem(ctx context.Context, collectionID, mediaID string, index int) error
+}
+
 type Repository interface {
 	MediaRepository
 	CategoryRepository
+	CollectionRepository
 }
 
 type Blobs interface {
@@ -58,6 +70,7 @@ func (s *Server) Handler() http.Handler {
 	rpc := http.NewServeMux()
 	rpc.Handle(archeicv1connect.NewMediaServiceHandler(&mediaService{repo: s.repo, blobs: s.blobs}, opts...))
 	rpc.Handle(archeicv1connect.NewCategoryServiceHandler(&categoryService{repo: s.repo}, opts...))
+	rpc.Handle(archeicv1connect.NewCollectionServiceHandler(&collectionService{repo: s.repo}, opts...))
 
 	mux := http.NewServeMux()
 	mux.Handle("/api/", http.StripPrefix("/api", rpc))

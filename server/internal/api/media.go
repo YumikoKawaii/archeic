@@ -20,7 +20,10 @@ type mediaService struct {
 }
 
 func (s *mediaService) List(ctx context.Context, req *connect.Request[archeicv1.MediaServiceListRequest]) (*connect.Response[archeicv1.MediaServiceListResponse], error) {
-	items, err := s.repo.List(ctx, kindFromProto(req.Msg.GetKind()))
+	items, err := s.repo.List(ctx, store.MediaFilter{
+		Kind:         kindFromProto(req.Msg.GetKind()),
+		CollectionID: req.Msg.GetCollectionId(),
+	})
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, fmt.Errorf("listing media: %w", err))
 	}

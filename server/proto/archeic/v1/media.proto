@@ -31,6 +31,7 @@ service MediaService {
 
 message MediaServiceListRequest {
   Kind kind = 1;
+  string collection_id = 2;
 }
 
 message MediaServiceListResponse {

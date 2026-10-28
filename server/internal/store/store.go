@@ -74,14 +74,32 @@ func (s *Store) Create(ctx context.Context, m *Media) error {
 	return err
 }
 
-func (s *Store) List(ctx context.Context, kind string) ([]Media, error) {
-	q := `SELECT id, name, kind, content_type, size, object_key, created_at FROM media`
-	var args []any
-	if kind != "" {
-		q += ` WHERE kind = ?`
-		args = append(args, kind)
+type MediaFilter struct {
+	Kind         string
+	CollectionID string
+}
+
+func (s *Store) List(ctx context.Context, f MediaFilter) ([]Media, error) {
+	q := `SELECT m.id, m.name, m.kind, m.content_type, m.size, m.object_key, m.created_at FROM media m`
+	var (
+		where []string
+		args  []any
+	)
+	order := ` ORDER BY m.created_at DESC`
+	if f.CollectionID != "" {
+		q += ` JOIN items i ON i.media_id = m.id`
+		where = append(where, `i.collection_id = ?`)
+		args = append(args, f.CollectionID)
+		order = ` ORDER BY i.position`
 	}
-	q += ` ORDER BY created_at DESC`
+	if f.Kind != "" {
+		where = append(where, `m.kind = ?`)
+		args = append(args, f.Kind)
+	}
+	if len(where) > 0 {
+		q += ` WHERE ` + strings.Join(where, ` AND `)
+	}
+	q += order
 	rows, err := s.db.QueryContext(ctx, q, args...)
 	if err != nil {
 		return nil, err

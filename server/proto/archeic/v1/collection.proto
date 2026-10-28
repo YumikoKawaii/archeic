@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package archeic.v1;
+
+import "google/protobuf/timestamp.proto";
+
+message Collection {
+  string id = 1;
+  string category_id = 2;
+  optional string parent_id = 3;
+  string name = 4;
+  optional string cover_id = 5;
+  google.protobuf.Timestamp create_time = 6;
+  google.protobuf.Timestamp update_time = 7;
+}
+
+service CollectionService {
+  rpc List(CollectionServiceListRequest) returns (CollectionServiceListResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+  rpc Get(CollectionServiceGetRequest) returns (CollectionServiceGetResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+  rpc Create(CollectionServiceCreateRequest) returns (CollectionServiceCreateResponse) {}
+  rpc Update(CollectionServiceUpdateRequest) returns (CollectionServiceUpdateResponse) {}
+  rpc Delete(CollectionServiceDeleteRequest) returns (CollectionServiceDeleteResponse) {}
+  rpc AddItems(CollectionServiceAddItemsRequest) returns (CollectionServiceAddItemsResponse) {}
+  rpc RemoveItems(CollectionServiceRemoveItemsRequest) returns (CollectionServiceRemoveItemsResponse) {}
+  rpc MoveItem(CollectionServiceMoveItemRequest) returns (CollectionServiceMoveItemResponse) {}
+}
+
+message CollectionServiceListRequest {
+  string category_id = 1;
+  optional string parent_id = 2;
+}
+
+message CollectionServiceListResponse {
+  repeated Collection collections = 1;
+}
+
+message CollectionServiceGetRequest {
+  string id = 1;
+}
+
+message CollectionServiceGetResponse {
+  Collection collection = 1;
+}
+
+message CollectionServiceCreateRequest {
+  string category_id = 1;
+  optional string parent_id = 2;
+  string name = 3;
+  optional string cover_id = 4;
+}
+
+message CollectionServiceCreateResponse {
+  Collection collection = 1;
+}
+
+message CollectionServiceUpdateRequest {
+  string id = 1;
+  optional string name = 2;
+  optional string parent_id = 3;
+  optional string cover_id = 4;
+}
+
+message CollectionServiceUpdateResponse {
+  Collection collection = 1;
+}
+
+message CollectionServiceDeleteRequest {
+  string id = 1;
+}
+
+message CollectionServiceDeleteResponse {}
+
+message CollectionServiceAddItemsRequest {
+  string collection_id = 1;
+  repeated string media_ids = 2;
+}
+
+message CollectionServiceAddItemsResponse {}
+
+message CollectionServiceRemoveItemsRequest {
+  string collection_id = 1;
+  repeated string media_ids = 2;
+}
+
+message CollectionServiceRemoveItemsResponse {}
+
+message CollectionServiceMoveItemRequest {
+  string collection_id = 1;
+  string media_id = 2;
+  int32 index = 3;
+}
+
+message CollectionServiceMoveItemResponse {}

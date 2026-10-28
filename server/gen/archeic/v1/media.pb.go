@@ -158,6 +158,7 @@ func (x *Media) GetCreateTime() *timestamppb.Timestamp {
 type MediaServiceListRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Kind          Kind                   `protobuf:"varint,1,opt,name=kind,proto3,enum=archeic.v1.Kind" json:"kind,omitempty"`
+	CollectionId  string                 `protobuf:"bytes,2,opt,name=collection_id,json=collectionId,proto3" json:"collection_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -197,6 +198,13 @@ func (x *MediaServiceListRequest) GetKind() Kind {
 		return x.Kind
 	}
 	return Kind_KIND_UNSPECIFIED
+}
+
+func (x *MediaServiceListRequest) GetCollectionId() string {
+	if x != nil {
+		return x.CollectionId
+	}
+	return ""
 }
 
 type MediaServiceListResponse struct {
@@ -424,9 +432,10 @@ const file_archeic_v1_media_proto_rawDesc = "" +
 	"\fcontent_type\x18\x04 \x01(\tR\vcontentType\x12\x12\n" +
 	"\x04size\x18\x05 \x01(\x03R\x04size\x12;\n" +
 	"\vcreate_time\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"createTime\"?\n" +
+	"createTime\"d\n" +
 	"\x17MediaServiceListRequest\x12$\n" +
-	"\x04kind\x18\x01 \x01(\x0e2\x10.archeic.v1.KindR\x04kind\"C\n" +
+	"\x04kind\x18\x01 \x01(\x0e2\x10.archeic.v1.KindR\x04kind\x12#\n" +
+	"\rcollection_id\x18\x02 \x01(\tR\fcollectionId\"C\n" +
 	"\x18MediaServiceListResponse\x12'\n" +
 	"\x05media\x18\x01 \x03(\v2\x11.archeic.v1.MediaR\x05media\"(\n" +
 	"\x16MediaServiceGetRequest\x12\x0e\n" +
