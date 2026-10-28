@@ -46,6 +46,10 @@ final class Client {
         base.appending(path: "api/media/\(id)/content")
     }
 
+    func thumbURL(_ id: String, size: Int) -> URL {
+        base.appending(path: "api/media/\(id)/thumb").appending(queryItems: [URLQueryItem(name: "size", value: String(size))])
+    }
+
     private func call<Req: Encodable, Res: Decodable>(_ service: String, _ method: String, _ body: Req) async throws -> Res {
         var req = URLRequest(url: base.appending(path: "api/archeic.v1.\(service)/\(method)"))
         req.httpMethod = "POST"

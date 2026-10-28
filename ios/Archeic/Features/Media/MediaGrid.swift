@@ -12,13 +12,14 @@ struct MediaGrid: View {
     @State private var selected: Set<String> = []
     @State private var viewing: Media?
     @State private var picking = false
+    @State private var sections: [DaySection] = []
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 3)
 
     var body: some View {
         LazyVStack(alignment: .leading, spacing: 0, pinnedViews: grouped ? [.sectionHeaders] : []) {
             if grouped {
-                ForEach(groupByDay(items)) { section in
+                ForEach(sections) { section in
                     Section {
                         grid(section.items)
                     } header: {
@@ -35,6 +36,9 @@ struct MediaGrid: View {
             }
         }
         .onChange(of: selecting) { _, on in if !on { selected = [] } }
+        .onChange(of: items, initial: true) { _, list in
+            if grouped { sections = groupByDay(list) }
+        }
         .fullScreenCover(item: $viewing) { m in
             Viewer(items: items, start: m, collectionId: collectionId)
         }

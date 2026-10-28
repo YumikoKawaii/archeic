@@ -122,7 +122,7 @@ struct ZoomImage: View {
 
     var body: some View {
         GeometryReader { geo in
-            Thumbnail(media: media, maxPixel: 2400, fill: false)
+            Thumbnail(media: media, maxPixel: 2400, fill: false, original: true)
                 .frame(width: geo.size.width, height: geo.size.height)
                 .scaleEffect(scale)
                 .offset(offset)
