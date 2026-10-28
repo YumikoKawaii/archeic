@@ -111,7 +111,7 @@ Media and storage player. `server/` is Go + MySQL + RustFS (S3-compatible), `pre
 
 ### Config
 
-- Config comes from environment variables only, loaded once in `config.Load()`, with defaults for local dev.
+- Config comes from environment variables only, loaded once in `config.Load()`. Non-secret settings may have local-dev defaults; credentials and DSNs never have defaults in code.
 - No globals beyond constants and sentinel errors.
 
 ### Dependencies
@@ -145,4 +145,5 @@ Media and storage player. `server/` is Go + MySQL + RustFS (S3-compatible), `pre
 
 ## Running
 
+- Copy `.env.example` to `.env` and fill in credentials; `.env` is git-ignored and `docker-compose.yml` reads every secret from it. Never commit real credentials.
 - `docker compose up -d --build` in `archeic/`; the `migrate` service runs `migrate up` before `server` starts. App on `http://localhost:8080`, RustFS console on `http://localhost:9001`.

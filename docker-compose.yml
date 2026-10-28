@@ -1,11 +1,13 @@
+x-mysql-dsn: &mysql-dsn ${MYSQL_USER:?set in .env}:${MYSQL_PASSWORD:?set in .env}@tcp(mysql:3306)/${MYSQL_DATABASE:?set in .env}?parseTime=true
+
 services:
   mysql:
     image: mysql:8.4
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: archeic
-      MYSQL_USER: archeic
-      MYSQL_PASSWORD: archeic
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set in .env}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - mysql-data:/var/lib/mysql
     ports:
@@ -14,8 +16,8 @@ services:
   rustfs:
     image: rustfs/rustfs:1.0.4
     environment:
-      RUSTFS_ACCESS_KEY: archeic
-      RUSTFS_SECRET_KEY: archeic-secret
+      RUSTFS_ACCESS_KEY: ${S3_ACCESS_KEY:?set in .env}
+      RUSTFS_SECRET_KEY: ${S3_SECRET_KEY:?set in .env}
       RUSTFS_CONSOLE_ENABLE: "true"
     volumes:
       - rustfs-data:/data
@@ -27,7 +29,7 @@ services:
     build: ./server
     command: ["migrate", "up"]
     environment:
-      MYSQL_DSN: archeic:archeic@tcp(mysql:3306)/archeic?parseTime=true
+      MYSQL_DSN: *mysql-dsn
     depends_on:
       - mysql
 
@@ -35,11 +37,11 @@ services:
     build: ./server
     command: ["server"]
     environment:
-      MYSQL_DSN: archeic:archeic@tcp(mysql:3306)/archeic?parseTime=true
+      MYSQL_DSN: *mysql-dsn
       S3_ENDPOINT: rustfs:9000
-      S3_ACCESS_KEY: archeic
-      S3_SECRET_KEY: archeic-secret
-      S3_BUCKET: archeic
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+      S3_SECRET_KEY: ${S3_SECRET_KEY}
+      S3_BUCKET: ${S3_BUCKET:-archeic}
     depends_on:
       migrate:
         condition: service_completed_successfully
