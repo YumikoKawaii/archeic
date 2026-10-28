@@ -89,21 +89,22 @@ struct CollectionPicker: View {
     var exclude: String?
     let pick: (Collection) async -> Void
 
-    @State private var groups: [(Category, [Collection])] = []
+    @State private var groups: [(Category, [(Collection, Int)])] = []
 
     var body: some View {
         NavigationStack {
             List {
                 ForEach(groups, id: \.0.id) { cat, cols in
                     Section(cat.name) {
-                        ForEach(cols.filter { $0.id != exclude }) { c in
+                        ForEach(cols.filter { $0.0.id != exclude }, id: \.0.id) { c, depth in
                             Button {
                                 Task {
                                     await pick(c)
                                     dismiss()
                                 }
                             } label: {
-                                Label(c.name, systemImage: "folder")
+                                Label(c.name, systemImage: depth == 0 ? "folder" : "folder.fill")
+                                    .padding(.leading, CGFloat(depth) * 22)
                             }
                         }
                     }
@@ -112,7 +113,22 @@ struct CollectionPicker: View {
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } } }
-            .task { groups = (try? await client.allCollections()) ?? [] }
+            .task {
+                var out: [(Category, [(Collection, Int)])] = []
+                for cat in (try? await client.categories()) ?? [] {
+                    out.append((cat, await tree(cat.id, parent: nil, depth: 0)))
+                }
+                groups = out
+            }
         }
+    }
+
+    private func tree(_ categoryId: String, parent: String?, depth: Int) async -> [(Collection, Int)] {
+        var out: [(Collection, Int)] = []
+        for c in (try? await client.collections(categoryId: categoryId, parentId: parent)) ?? [] {
+            out.append((c, depth))
+            out += await tree(categoryId, parent: c.id, depth: depth + 1)
+        }
+        return out
     }
 }
