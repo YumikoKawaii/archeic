@@ -12,6 +12,7 @@ export default function App() {
   const [version, setVersion] = useState(0);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
+  const [menu, setMenu] = useState(false);
 
   const refresh = () => setVersion((v) => v + 1);
 
@@ -37,13 +38,29 @@ export default function App() {
     refresh();
   };
 
-  const props = { version, onNavigate: setView, onChanged: refresh };
+  const navigate = (v: View) => {
+    setView(v);
+    setMenu(false);
+  };
+
+  const props = { version, onNavigate: navigate, onChanged: refresh };
 
   return (
     <div className="shell">
       <header className="top">
+        <button
+          type="button"
+          className="menu"
+          aria-label={menu ? "Close menu" : "Open menu"}
+          aria-expanded={menu}
+          onClick={() => setMenu(!menu)}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d={menu ? "M6 6l12 12M18 6L6 18" : "M4 7h16M4 12h16M4 17h16"} />
+          </svg>
+        </button>
         <h1>
-          <button type="button" onClick={() => setView({ kind: "library" })}>archeic</button>
+          <button type="button" onClick={() => navigate({ kind: "library" })}>archeic</button>
         </h1>
         <label className="upload">
           {busy ? "Uploading…" : view.kind === "collection" ? "Upload here" : "Upload"}
@@ -62,7 +79,10 @@ export default function App() {
         </label>
       </header>
 
-      <Sidebar view={view} {...props} />
+      <div className={menu ? "drawer open" : "drawer"}>
+        <Sidebar view={view} {...props} />
+      </div>
+      {menu && <div className="backdrop" onClick={() => setMenu(false)} />}
 
       <main className="content">
         {view.kind === "library" && <LibraryView version={version} onChanged={refresh} />}
