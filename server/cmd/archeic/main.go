@@ -52,13 +52,13 @@ func main() {
 
 func serverAction(c *cli.Context) error {
 	ctx := c.Context
-	db, err := repository.Open(cfg.MySQLDSN)
+	db, err := repository.Open(cfg.MySQL.DSN)
 	if err != nil {
 		return err
 	}
 	defer db.Close()
 
-	blobs, err := storage.New(ctx, cfg)
+	blobs, err := storage.New(ctx, cfg.Minio)
 	if err != nil {
 		return err
 	}
@@ -68,24 +68,24 @@ func serverAction(c *cli.Context) error {
 	protocols.SetUnencryptedHTTP2(true)
 
 	srv := &http.Server{
-		Addr:      cfg.Addr,
+		Addr:      cfg.Server.Addr,
 		Handler:   api.New(repository.NewUnitOfWork(db), blobs, log).Handler(),
 		Protocols: protocols,
 	}
-	log.Info("archeic listening", "addr", cfg.Addr)
+	log.Info("archeic listening", "addr", cfg.Server.Addr)
 	return srv.ListenAndServe()
 }
 
 func migrateAction(direction string) cli.ActionFunc {
 	return func(*cli.Context) error {
-		db, err := repository.Open(cfg.MySQLDSN)
+		db, err := repository.Open(cfg.MySQL.DSN)
 		if err != nil {
 			return err
 		}
 		defer db.Close()
 
-		log.Info("running migrations", "direction", direction, "dir", cfg.MigrationsDir)
-		if err := repository.Migrate(db, cfg.MigrationsDir, direction); err != nil {
+		log.Info("running migrations", "direction", direction, "dir", cfg.MySQL.MigrationsDir)
+		if err := repository.Migrate(db, cfg.MySQL.MigrationsDir, direction); err != nil {
 			return err
 		}
 		log.Info("migrations completed", "direction", direction)

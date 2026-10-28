@@ -15,24 +15,24 @@ type Storage struct {
 	bucket string
 }
 
-func New(ctx context.Context, cfg config.Config) (*Storage, error) {
-	c, err := minio.New(cfg.MinioEndpoint, &minio.Options{
-		Creds:  credentials.NewStaticV4(cfg.MinioAccessKey, cfg.MinioSecretKey, ""),
-		Secure: cfg.MinioUseSSL,
+func New(ctx context.Context, cfg config.Minio) (*Storage, error) {
+	c, err := minio.New(cfg.Endpoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(cfg.AccessKey, cfg.SecretKey, ""),
+		Secure: cfg.UseSSL,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("creating minio client: %w", err)
 	}
-	exists, err := c.BucketExists(ctx, cfg.MinioBucket)
+	exists, err := c.BucketExists(ctx, cfg.Bucket)
 	if err != nil {
 		return nil, fmt.Errorf("checking bucket: %w", err)
 	}
 	if !exists {
-		if err := c.MakeBucket(ctx, cfg.MinioBucket, minio.MakeBucketOptions{}); err != nil {
+		if err := c.MakeBucket(ctx, cfg.Bucket, minio.MakeBucketOptions{}); err != nil {
 			return nil, fmt.Errorf("creating bucket: %w", err)
 		}
 	}
-	return &Storage{client: c, bucket: cfg.MinioBucket}, nil
+	return &Storage{client: c, bucket: cfg.Bucket}, nil
 }
 
 func (s *Storage) Put(ctx context.Context, key string, r io.Reader, size int64, contentType string) error {
