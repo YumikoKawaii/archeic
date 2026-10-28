@@ -33,7 +33,9 @@ struct RootView: View {
             ForEach(tabs.indices, id: \.self) { i in
                 Button { tab = i } label: {
                     VStack(spacing: 4) {
-                        Image(systemName: tabs[i].1).font(.system(size: 19, weight: .semibold))
+                        Image(systemName: tabs[i].1)
+                            .font(.system(size: 19, weight: .semibold))
+                            .frame(height: 24)
                         Text(tabs[i].0).font(.caption2.weight(.semibold))
                     }
                     .foregroundStyle(tab == i ? Theme.accent : Theme.muted)
