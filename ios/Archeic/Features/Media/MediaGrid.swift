@@ -50,9 +50,12 @@ struct MediaGrid: View {
             }
             .presentationDetents([.medium, .large])
         }
-        .safeAreaInset(edge: .bottom) {
-            if selecting { selectionBar }
+        .toolbar {
+            if selecting {
+                ToolbarItemGroup(placement: .bottomBar) { selectionBar }
+            }
         }
+        .toolbar(selecting ? .hidden : .visible, for: .tabBar)
     }
 
     private func grid(_ list: [Media]) -> some View {
@@ -122,8 +125,6 @@ struct MediaGrid: View {
         }
         .font(.subheadline.weight(.semibold))
         .disabled(selected.isEmpty)
-        .padding(.vertical, 14)
-        .background(.ultraThinMaterial)
     }
 }
 
