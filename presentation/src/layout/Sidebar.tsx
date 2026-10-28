@@ -30,7 +30,7 @@ export default function Sidebar({ view, version, onNavigate, onChanged }: Props)
       return next;
     });
 
-  const current = view.kind === "library" ? "" : view.id;
+  const current = view.kind === "category" || view.kind === "collection" ? view.id : "";
 
   return (
     <aside className="sidebar">
@@ -40,6 +40,13 @@ export default function Sidebar({ view, version, onNavigate, onChanged }: Props)
         onClick={() => onNavigate({ kind: "library" })}
       >
         Library
+      </button>
+      <button
+        type="button"
+        className={view.kind === "browse" ? "side-link on" : "side-link"}
+        onClick={() => onNavigate({ kind: "browse" })}
+      >
+        Collections
       </button>
 
       <div className="side-head">

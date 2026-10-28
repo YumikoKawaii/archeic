@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { addItems, uploadMedia } from "./api/client";
+import BrowseView from "./features/browse/BrowseView";
 import CategoryView from "./features/category/CategoryView";
 import CollectionView from "./features/collection/CollectionView";
 import LibraryView from "./features/library/LibraryView";
-import { notify, onNotice, run } from "./lib/notify";
 import Sidebar from "./layout/Sidebar";
+import TabBar from "./layout/TabBar";
+import { notify, onNotice, run } from "./lib/notify";
 import type { View } from "./lib/view";
 
 export default function App() {
@@ -12,7 +14,6 @@ export default function App() {
   const [version, setVersion] = useState(0);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
-  const [menu, setMenu] = useState(false);
 
   const refresh = () => setVersion((v) => v + 1);
 
@@ -20,9 +21,14 @@ export default function App() {
 
   useEffect(() => {
     if (!notice) return;
-    const t = setTimeout(() => setNotice(""), 4000);
+    const t = setTimeout(() => setNotice(""), 3500);
     return () => clearTimeout(t);
   }, [notice]);
+
+  const navigate = (v: View) => {
+    setView(v);
+    window.scrollTo(0, 0);
+  };
 
   const onUpload = async (files: FileList | null) => {
     if (!files?.length) return;
@@ -38,32 +44,17 @@ export default function App() {
     refresh();
   };
 
-  const navigate = (v: View) => {
-    setView(v);
-    setMenu(false);
-  };
-
+  const uploadLabel = busy ? "Uploading…" : view.kind === "collection" ? "Upload here" : "Upload";
   const props = { version, onNavigate: navigate, onChanged: refresh };
 
   return (
     <div className="shell">
       <header className="top">
-        <button
-          type="button"
-          className="menu"
-          aria-label={menu ? "Close menu" : "Open menu"}
-          aria-expanded={menu}
-          onClick={() => setMenu(!menu)}
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d={menu ? "M6 6l12 12M18 6L6 18" : "M4 7h16M4 12h16M4 17h16"} />
-          </svg>
-        </button>
         <h1>
           <button type="button" onClick={() => navigate({ kind: "library" })}>archeic</button>
         </h1>
         <label className="upload">
-          {busy ? "Uploading…" : view.kind === "collection" ? "Upload here" : "Upload"}
+          {uploadLabel}
           <input
             id="upload"
             type="file"
@@ -79,16 +70,16 @@ export default function App() {
         </label>
       </header>
 
-      <div className={menu ? "drawer open" : "drawer"}>
-        <Sidebar view={view} {...props} />
-      </div>
-      {menu && <div className="backdrop" onClick={() => setMenu(false)} />}
+      <Sidebar view={view} {...props} />
 
       <main className="content">
         {view.kind === "library" && <LibraryView version={version} onChanged={refresh} />}
+        {view.kind === "browse" && <BrowseView {...props} />}
         {view.kind === "category" && <CategoryView key={view.id} id={view.id} {...props} />}
         {view.kind === "collection" && <CollectionView key={view.id} id={view.id} {...props} />}
       </main>
+
+      <TabBar view={view} busy={busy} uploadLabel={uploadLabel} onNavigate={navigate} onUpload={onUpload} />
 
       {notice && (
         <div className="toast" role="status">
