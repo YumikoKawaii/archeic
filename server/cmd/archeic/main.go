@@ -8,8 +8,8 @@ import (
 
 	"github.com/yumikokawaii/archeic/internal/api"
 	"github.com/yumikokawaii/archeic/internal/config"
+	"github.com/yumikokawaii/archeic/internal/repository"
 	"github.com/yumikokawaii/archeic/internal/storage"
-	"github.com/yumikokawaii/archeic/internal/store"
 )
 
 func main() {
@@ -23,13 +23,13 @@ func main() {
 func run(ctx context.Context, log *slog.Logger) error {
 	cfg := config.Load()
 
-	db, err := store.Open(cfg.MySQLDSN)
+	db, err := repository.Open(cfg.MySQLDSN)
 	if err != nil {
 		return err
 	}
 	defer db.Close()
 
-	if err := db.Migrate(ctx); err != nil {
+	if err := repository.Migrate(ctx, db); err != nil {
 		return err
 	}
 
@@ -44,7 +44,7 @@ func run(ctx context.Context, log *slog.Logger) error {
 
 	srv := &http.Server{
 		Addr:      cfg.Addr,
-		Handler:   api.New(db, blobs, log).Handler(),
+		Handler:   api.New(repository.NewUnitOfWork(db), blobs, log).Handler(),
 		Protocols: protocols,
 	}
 	log.Info("archeic listening", "addr", cfg.Addr)

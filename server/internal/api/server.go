@@ -8,40 +8,8 @@ import (
 
 	"connectrpc.com/connect"
 	"github.com/yumikokawaii/archeic/gen/archeic/v1/archeicv1connect"
-	"github.com/yumikokawaii/archeic/internal/store"
+	"github.com/yumikokawaii/archeic/internal/repository"
 )
-
-type MediaRepository interface {
-	Create(ctx context.Context, m *store.Media) error
-	List(ctx context.Context, f store.MediaFilter) ([]store.Media, error)
-	Get(ctx context.Context, id string) (*store.Media, error)
-	Delete(ctx context.Context, id string) error
-}
-
-type CategoryRepository interface {
-	CreateCategory(ctx context.Context, c *store.Category) error
-	ListCategories(ctx context.Context) ([]store.Category, error)
-	GetCategory(ctx context.Context, id string) (*store.Category, error)
-	UpdateCategory(ctx context.Context, c *store.Category) error
-	DeleteCategory(ctx context.Context, id string) error
-}
-
-type CollectionRepository interface {
-	CreateCollection(ctx context.Context, c *store.Collection) error
-	ListCollections(ctx context.Context, categoryID string, parentID *string) ([]store.Collection, error)
-	GetCollection(ctx context.Context, id string) (*store.Collection, error)
-	UpdateCollection(ctx context.Context, c *store.Collection) error
-	DeleteCollection(ctx context.Context, id string) error
-	AddItems(ctx context.Context, collectionID string, mediaIDs []string) error
-	RemoveItems(ctx context.Context, collectionID string, mediaIDs []string) error
-	MoveItem(ctx context.Context, collectionID, mediaID string, index int) error
-}
-
-type Repository interface {
-	MediaRepository
-	CategoryRepository
-	CollectionRepository
-}
 
 type Blobs interface {
 	Put(ctx context.Context, key string, r io.Reader, size int64, contentType string) error
@@ -50,13 +18,13 @@ type Blobs interface {
 }
 
 type Server struct {
-	repo  Repository
+	uow   *repository.UnitOfWork
 	blobs Blobs
 	log   *slog.Logger
 }
 
-func New(repo Repository, blobs Blobs, log *slog.Logger) *Server {
-	return &Server{repo: repo, blobs: blobs, log: log}
+func New(uow *repository.UnitOfWork, blobs Blobs, log *slog.Logger) *Server {
+	return &Server{uow: uow, blobs: blobs, log: log}
 }
 
 func (s *Server) Handler() http.Handler {
@@ -68,9 +36,9 @@ func (s *Server) Handler() http.Handler {
 		}),
 	}
 	rpc := http.NewServeMux()
-	rpc.Handle(archeicv1connect.NewMediaServiceHandler(&mediaService{repo: s.repo, blobs: s.blobs}, opts...))
-	rpc.Handle(archeicv1connect.NewCategoryServiceHandler(&categoryService{repo: s.repo}, opts...))
-	rpc.Handle(archeicv1connect.NewCollectionServiceHandler(&collectionService{repo: s.repo}, opts...))
+	rpc.Handle(archeicv1connect.NewMediaServiceHandler(&mediaService{uow: s.uow, blobs: s.blobs}, opts...))
+	rpc.Handle(archeicv1connect.NewCategoryServiceHandler(&categoryService{uow: s.uow}, opts...))
+	rpc.Handle(archeicv1connect.NewCollectionServiceHandler(&collectionService{uow: s.uow}, opts...))
 
 	mux := http.NewServeMux()
 	mux.Handle("/api/", http.StripPrefix("/api", rpc))

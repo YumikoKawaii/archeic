@@ -3,12 +3,14 @@ package api
 import (
 	"context"
 	"regexp"
+	"time"
 
 	"connectrpc.com/connect"
 	"github.com/google/uuid"
 	archeicv1 "github.com/yumikokawaii/archeic/gen/archeic/v1"
 	"github.com/yumikokawaii/archeic/gen/archeic/v1/archeicv1connect"
-	"github.com/yumikokawaii/archeic/internal/store"
+	"github.com/yumikokawaii/archeic/internal/model"
+	"github.com/yumikokawaii/archeic/internal/repository"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -17,13 +19,13 @@ var _ archeicv1connect.CategoryServiceHandler = (*categoryService)(nil)
 var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 
 type categoryService struct {
-	repo CategoryRepository
+	uow *repository.UnitOfWork
 }
 
 func (s *categoryService) List(ctx context.Context, _ *connect.Request[archeicv1.CategoryServiceListRequest]) (*connect.Response[archeicv1.CategoryServiceListResponse], error) {
-	items, err := s.repo.ListCategories(ctx)
+	items, err := s.uow.Category().List(ctx)
 	if err != nil {
-		return nil, storeError("listing categories", err)
+		return nil, repoError("listing categories", err)
 	}
 	out := make([]*archeicv1.Category, 0, len(items))
 	for _, c := range items {
@@ -33,54 +35,68 @@ func (s *categoryService) List(ctx context.Context, _ *connect.Request[archeicv1
 }
 
 func (s *categoryService) Get(ctx context.Context, req *connect.Request[archeicv1.CategoryServiceGetRequest]) (*connect.Response[archeicv1.CategoryServiceGetResponse], error) {
-	c, err := s.find(ctx, req.Msg.GetId())
+	if req.Msg.GetId() == "" {
+		return nil, invalid("id is required")
+	}
+	c, err := s.uow.Category().Get(ctx, req.Msg.GetId())
 	if err != nil {
-		return nil, err
+		return nil, repoError("getting category", err)
 	}
 	return connect.NewResponse(&archeicv1.CategoryServiceGetResponse{Category: categoryToProto(c)}), nil
 }
 
 func (s *categoryService) Create(ctx context.Context, req *connect.Request[archeicv1.CategoryServiceCreateRequest]) (*connect.Response[archeicv1.CategoryServiceCreateResponse], error) {
 	msg := req.Msg
-	c := &store.Category{
-		ID:       uuid.NewString(),
-		Slug:     msg.GetSlug(),
-		Name:     msg.GetName(),
-		Layout:   layoutFromProto(msg.GetLayout()),
-		Position: msg.GetPosition(),
+	now := time.Now().UTC()
+	c := &model.Category{
+		ID:        uuid.NewString(),
+		Slug:      msg.GetSlug(),
+		Name:      msg.GetName(),
+		Layout:    layoutFromProto(msg.GetLayout()),
+		Position:  msg.GetPosition(),
+		CreatedAt: now,
+		UpdatedAt: now,
 	}
 	if err := validateCategory(c); err != nil {
 		return nil, err
 	}
-	if err := s.repo.CreateCategory(ctx, c); err != nil {
-		return nil, storeError("creating category", err)
+	if err := s.uow.Category().Create(ctx, c); err != nil {
+		return nil, repoError("creating category", err)
 	}
 	return connect.NewResponse(&archeicv1.CategoryServiceCreateResponse{Category: categoryToProto(c)}), nil
 }
 
 func (s *categoryService) Update(ctx context.Context, req *connect.Request[archeicv1.CategoryServiceUpdateRequest]) (*connect.Response[archeicv1.CategoryServiceUpdateResponse], error) {
 	msg := req.Msg
-	c, err := s.find(ctx, msg.GetId())
+	if msg.GetId() == "" {
+		return nil, invalid("id is required")
+	}
+	var c *model.Category
+	err := s.uow.Tx(ctx, func(tx *repository.UnitOfWork) error {
+		var err error
+		if c, err = tx.Category().Get(ctx, msg.GetId()); err != nil {
+			return err
+		}
+		if msg.Slug != nil {
+			c.Slug = msg.GetSlug()
+		}
+		if msg.Name != nil {
+			c.Name = msg.GetName()
+		}
+		if msg.Layout != nil {
+			c.Layout = layoutFromProto(msg.GetLayout())
+		}
+		if msg.Position != nil {
+			c.Position = msg.GetPosition()
+		}
+		if err := validateCategory(c); err != nil {
+			return err
+		}
+		c.UpdatedAt = time.Now().UTC()
+		return tx.Category().Update(ctx, c)
+	})
 	if err != nil {
-		return nil, err
-	}
-	if msg.Slug != nil {
-		c.Slug = msg.GetSlug()
-	}
-	if msg.Name != nil {
-		c.Name = msg.GetName()
-	}
-	if msg.Layout != nil {
-		c.Layout = layoutFromProto(msg.GetLayout())
-	}
-	if msg.Position != nil {
-		c.Position = msg.GetPosition()
-	}
-	if err := validateCategory(c); err != nil {
-		return nil, err
-	}
-	if err := s.repo.UpdateCategory(ctx, c); err != nil {
-		return nil, storeError("updating category", err)
+		return nil, repoError("updating category", err)
 	}
 	return connect.NewResponse(&archeicv1.CategoryServiceUpdateResponse{Category: categoryToProto(c)}), nil
 }
@@ -89,24 +105,13 @@ func (s *categoryService) Delete(ctx context.Context, req *connect.Request[arche
 	if req.Msg.GetId() == "" {
 		return nil, invalid("id is required")
 	}
-	if err := s.repo.DeleteCategory(ctx, req.Msg.GetId()); err != nil {
-		return nil, storeError("deleting category", err)
+	if err := s.uow.Category().Delete(ctx, req.Msg.GetId()); err != nil {
+		return nil, repoError("deleting category", err)
 	}
 	return connect.NewResponse(&archeicv1.CategoryServiceDeleteResponse{}), nil
 }
 
-func (s *categoryService) find(ctx context.Context, id string) (*store.Category, error) {
-	if id == "" {
-		return nil, invalid("id is required")
-	}
-	c, err := s.repo.GetCategory(ctx, id)
-	if err != nil {
-		return nil, storeError("getting category", err)
-	}
-	return c, nil
-}
-
-func validateCategory(c *store.Category) error {
+func validateCategory(c *model.Category) error {
 	switch {
 	case !slugPattern.MatchString(c.Slug):
 		return invalid("slug must be lowercase letters, digits and dashes")
@@ -118,7 +123,7 @@ func validateCategory(c *store.Category) error {
 	return nil
 }
 
-func categoryToProto(c *store.Category) *archeicv1.Category {
+func categoryToProto(c *model.Category) *archeicv1.Category {
 	return &archeicv1.Category{
 		Id:         c.ID,
 		Slug:       c.Slug,
@@ -131,10 +136,10 @@ func categoryToProto(c *store.Category) *archeicv1.Category {
 }
 
 var layouts = map[archeicv1.Layout]string{
-	archeicv1.Layout_LAYOUT_GALLERY:  store.LayoutGallery,
-	archeicv1.Layout_LAYOUT_LIBRARY:  store.LayoutLibrary,
-	archeicv1.Layout_LAYOUT_EPISODIC: store.LayoutEpisodic,
-	archeicv1.Layout_LAYOUT_TIMELINE: store.LayoutTimeline,
+	archeicv1.Layout_LAYOUT_GALLERY:  model.LayoutGallery,
+	archeicv1.Layout_LAYOUT_LIBRARY:  model.LayoutLibrary,
+	archeicv1.Layout_LAYOUT_EPISODIC: model.LayoutEpisodic,
+	archeicv1.Layout_LAYOUT_TIMELINE: model.LayoutTimeline,
 }
 
 func layoutFromProto(l archeicv1.Layout) string {

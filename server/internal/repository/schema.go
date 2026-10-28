@@ -1,4 +1,4 @@
-package store
+package repository
 
 var schema = []string{
 	`CREATE TABLE IF NOT EXISTS media (

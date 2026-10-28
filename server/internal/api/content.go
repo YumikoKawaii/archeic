@@ -7,7 +7,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/yumikokawaii/archeic/internal/store"
+	"github.com/yumikokawaii/archeic/internal/model"
+	"github.com/yumikokawaii/archeic/internal/repository"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -21,14 +22,14 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) {
 	defer file.Close()
 
 	ct := header.Header.Get("Content-Type")
-	kind := store.KindOf(ct)
+	kind := model.KindOf(ct)
 	if kind == "" {
 		http.Error(w, "only images and videos are supported", http.StatusUnsupportedMediaType)
 		return
 	}
 
 	id := uuid.NewString()
-	m := &store.Media{
+	m := &model.Media{
 		ID:          id,
 		Name:        header.Filename,
 		Kind:        kind,
@@ -42,14 +43,14 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "upload failed", http.StatusInternalServerError)
 		return
 	}
-	if err := s.repo.Create(ctx, m); err != nil {
+	if err := s.uow.Media().Create(ctx, m); err != nil {
 		_ = s.blobs.Remove(ctx, m.ObjectKey)
 		s.log.ErrorContext(ctx, "saving media failed", "err", err)
 		http.Error(w, "upload failed", http.StatusInternalServerError)
 		return
 	}
 
-	body, err := protojson.Marshal(toProto(m))
+	body, err := protojson.Marshal(mediaToProto(m))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -61,8 +62,8 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) content(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	m, err := s.repo.Get(ctx, r.PathValue("id"))
-	if errors.Is(err, store.ErrNotFound) {
+	m, err := s.uow.Media().Get(ctx, r.PathValue("id"))
+	if errors.Is(err, repository.ErrNotFound) {
 		http.NotFound(w, r)
 		return
 	}

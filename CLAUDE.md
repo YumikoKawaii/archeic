@@ -16,13 +16,14 @@ Media and storage player. `server/` is Go + MySQL + MinIO, `presentation/` is Re
 ### Layout
 
 - Entrypoints live in `server/cmd/<name>/main.go`; `main` only wires dependencies and starts the server.
-- Application code lives in `server/internal/<package>`. Packages are small, single-purpose, and named by what they provide (`store`, `storage`, `api`), never `util`, `common`, or `helpers`.
-- No import cycles; dependencies flow `api -> store/storage -> config`.
+- Application code lives in `server/internal/<package>`. Packages are small, single-purpose, and named by what they provide (`model`, `repository`, `storage`, `api`), never `util`, `common`, or `helpers`.
+- No import cycles; dependencies flow `api -> repository/storage -> model/config`.
+- `model` holds domain types and pure domain behaviour (e.g. `Items.Move`); no I/O.
 
 ### Style
 
 - Code must pass `gofmt`, `go vet`, and `staticcheck`.
-- Short, lowercase package names; no stutter (`store.Store`, not `store.MediaStore` when unambiguous).
+- Short, lowercase package names; no stutter (`model.Media`, not `model.MediaModel`).
 - Exported identifiers only when used outside the package.
 - Receiver names are short and consistent per type.
 - Accept interfaces, return concrete types. Define interfaces at the consumer, not the producer.
@@ -53,8 +54,8 @@ Media and storage player. `server/` is Go + MySQL + MinIO, `presentation/` is Re
 - API is Connect RPC (`connectrpc.com/connect`) with protobuf definitions in `server/proto/archeic/v1/*.proto`.
 - Code generation with `buf` (`buf.yaml`, `buf.gen.yaml`); generated code lives in `server/gen/` and is never edited by hand.
 - Services follow `<Resource>Service` naming with `Get`, `List`, `Create`, `Update`, `Delete` RPCs; request/response messages are `<Service><Rpc>Request` / `<Service><Rpc>Response` (e.g. `MediaServiceListRequest`) so `buf lint` passes with several services in one package.
-- Handlers implement the generated `<Service>Handler` interface, convert proto messages to domain types at the boundary, and never leak proto types into `store` or `storage`.
-- Return errors with `connect.NewError(connect.Code..., err)`; map `store.ErrNotFound` to `connect.CodeNotFound`, validation failures to `connect.CodeInvalidArgument`.
+- Handlers implement the generated `<Service>Handler` interface, convert proto messages to domain types at the boundary, and never leak proto types into `model`, `repository` or `storage`.
+- Return errors with `connect.NewError(connect.Code..., err)`; map `repository.ErrNotFound` to `connect.CodeNotFound`, validation failures to `connect.CodeInvalidArgument`.
 - Use interceptors (`connect.WithInterceptors`) for cross-cutting concerns (logging, recovery, validation), not per-handler code.
 - Serve over `net/http` with `http.Protocols` enabling HTTP/1.1 and unencrypted HTTP/2 so Connect, gRPC, and gRPC-Web all work.
 - Binary media upload and streaming stay on plain `net/http` routes alongside Connect: upload via multipart, playback via `http.ServeContent` so Range requests work.
@@ -89,7 +90,16 @@ Media and storage player. `server/` is Go + MySQL + MinIO, `presentation/` is Re
 
 - `database/sql` with the MySQL driver; parameterized queries only, never string-concatenated values.
 - Always `defer rows.Close()` and check `rows.Err()`.
-- Map `sql.ErrNoRows` to `store.ErrNotFound` at the store boundary.
+- Map `sql.ErrNoRows` to `repository.ErrNotFound` at the repository boundary.
+
+### Unit of work
+
+- All database access goes through `repository.UnitOfWork`; it exposes one accessor per repository (`uow.Media()`, `uow.Collection()`, ...).
+- Repositories take a `DBTX` and are simple: one table, plain CRUD and single-statement queries. No business rules, no cross-repository calls, no transactions inside a repository.
+- Any operation with more than one statement, or a read that decides a write, runs inside `uow.Tx(ctx, func(tx *repository.UnitOfWork) error { ... })` and uses only `tx` repositories inside the closure.
+- Use `LockX` methods (`SELECT ... FOR UPDATE`) inside `Tx` when a read decides a write.
+- Business rules (validation, ordering, hierarchy checks) live in the caller (`api`) or in `model`, not in repositories.
+- Side effects outside MySQL (MinIO) run last inside the `Tx` closure so a failure rolls the database back.
 - Schema changes go through `Migrate`, idempotent (`IF NOT EXISTS`).
 
 ### Storage

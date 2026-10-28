@@ -5,16 +5,19 @@ import (
 	"fmt"
 
 	"connectrpc.com/connect"
-	"github.com/yumikokawaii/archeic/internal/store"
+	"github.com/yumikokawaii/archeic/internal/repository"
 )
 
-func storeError(op string, err error) error {
+func repoError(op string, err error) error {
+	var ce *connect.Error
 	switch {
-	case errors.Is(err, store.ErrNotFound):
+	case errors.As(err, &ce):
+		return ce
+	case errors.Is(err, repository.ErrNotFound):
 		return connect.NewError(connect.CodeNotFound, err)
-	case errors.Is(err, store.ErrConflict):
+	case errors.Is(err, repository.ErrConflict):
 		return connect.NewError(connect.CodeAlreadyExists, err)
-	case errors.Is(err, store.ErrInvalidReference):
+	case errors.Is(err, repository.ErrInvalidReference):
 		return connect.NewError(connect.CodeInvalidArgument, err)
 	}
 	return connect.NewError(connect.CodeInternal, fmt.Errorf("%s: %w", op, err))
