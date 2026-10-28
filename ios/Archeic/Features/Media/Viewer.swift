@@ -350,15 +350,38 @@ struct VideoPage: View {
     @Binding var playing: Bool
 
     @State private var player: AVPlayer?
+    @State private var retries = 0
+    @State private var failed = false
+
+    private let maxRetries = 4
 
     var body: some View {
         VideoPlayer(player: player)
+            .overlay {
+                if failed {
+                    Button {
+                        retries = 0
+                        failed = false
+                        recover()
+                    } label: {
+                        Label("Couldn't play. Tap to retry", systemImage: "arrow.clockwise")
+                            .font(.subheadline.weight(.semibold))
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .background(.ultraThinMaterial, in: Capsule())
+                    }
+                    .foregroundStyle(.white)
+                }
+            }
             .onAppear { if player == nil { player = AVPlayer(url: url) } }
             .onChange(of: active, initial: true) { _, on in
                 if on { player?.play() } else { player?.pause() }
             }
-            .onReceive(NotificationCenter.default.publisher(for: AVPlayerItem.didPlayToEndTimeNotification)) { _ in
-                if active { playing = false }
+            .onReceive(NotificationCenter.default.publisher(for: AVPlayerItem.didPlayToEndTimeNotification)) { note in
+                if active, (note.object as? AVPlayerItem) === player?.currentItem { playing = false }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: AVPlayerItem.failedToPlayToEndTimeNotification)) { note in
+                if active, (note.object as? AVPlayerItem) === player?.currentItem { recover() }
             }
             .task(id: active) {
                 guard active, let player else { return }
@@ -366,6 +389,50 @@ struct VideoPage: View {
                     playing = rate > 0
                 }
             }
+            .task(id: active) {
+                guard active, let player else { return }
+                for await status in player.publisher(for: \.currentItem?.status).values where status == .failed {
+                    recover()
+                }
+            }
+            .task(id: active) {
+                guard active, let player else { return }
+                var waiting = 0
+                while !Task.isCancelled {
+                    try? await Task.sleep(for: .seconds(1))
+                    if player.timeControlStatus == .waitingToPlayAtSpecifiedRate {
+                        waiting += 1
+                        if waiting >= 8 {
+                            waiting = 0
+                            recover()
+                        }
+                    } else {
+                        waiting = 0
+                        if player.timeControlStatus == .playing { retries = 0 }
+                    }
+                }
+            }
             .onDisappear { player?.pause() }
+    }
+
+    private func recover() {
+        guard let player, active else { return }
+        guard retries < maxRetries else {
+            failed = true
+            return
+        }
+        retries += 1
+        let at = player.currentTime()
+        let delay = Double(1 << (retries - 1)) * 0.5
+        Task {
+            try? await Task.sleep(for: .seconds(delay))
+            guard active else { return }
+            let item = AVPlayerItem(url: url)
+            player.replaceCurrentItem(with: item)
+            if at.isValid, at.seconds > 0 {
+                await player.seek(to: at, toleranceBefore: .zero, toleranceAfter: .zero)
+            }
+            player.play()
+        }
     }
 }
