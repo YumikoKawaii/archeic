@@ -10,12 +10,12 @@ struct RootView: View {
     private let tabs = [("Home", "house.fill"), ("Library", "square.grid.2x2.fill"), ("Collections", "folder.fill")]
 
     var body: some View {
-        ZStack {
-            page(0) { HomeView(tab: $tab) }
-            page(1) { LibraryView() }
-            page(2) { CollectionsView() }
-        }
-        .safeAreaInset(edge: .bottom, spacing: 0) {
+        VStack(spacing: 0) {
+            ZStack {
+                page(0) { HomeView(tab: $tab) }
+                page(1) { LibraryView() }
+                page(2) { CollectionsView() }
+            }
             if !model.tabsHidden { tabBar }
         }
         .overlay(alignment: .top) { banner }
