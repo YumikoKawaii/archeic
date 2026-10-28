@@ -22,10 +22,18 @@ type collectionService struct {
 
 func (s *collectionService) List(ctx context.Context, req *connect.Request[archeicv1.CollectionServiceListRequest]) (*connect.Response[archeicv1.CollectionServiceListResponse], error) {
 	msg := req.Msg
-	if msg.GetCategoryId() == "" {
-		return nil, invalid("category_id is required")
+	var (
+		items []model.Collection
+		err   error
+	)
+	switch {
+	case msg.GetMediaId() != "":
+		items, err = s.uow.Collection().ListByMedia(ctx, msg.GetMediaId())
+	case msg.GetCategoryId() != "":
+		items, err = s.uow.Collection().List(ctx, msg.GetCategoryId(), msg.ParentId)
+	default:
+		return nil, invalid("category_id or media_id is required")
 	}
-	items, err := s.uow.Collection().List(ctx, msg.GetCategoryId(), msg.ParentId)
 	if err != nil {
 		return nil, repoError("listing collections", err)
 	}

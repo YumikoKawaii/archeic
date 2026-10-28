@@ -118,6 +118,7 @@ type CollectionServiceListRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	CategoryId    string                 `protobuf:"bytes,1,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
 	ParentId      *string                `protobuf:"bytes,2,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`
+	MediaId       string                 `protobuf:"bytes,3,opt,name=media_id,json=mediaId,proto3" json:"media_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -162,6 +163,13 @@ func (x *CollectionServiceListRequest) GetCategoryId() string {
 func (x *CollectionServiceListRequest) GetParentId() string {
 	if x != nil && x.ParentId != nil {
 		return *x.ParentId
+	}
+	return ""
+}
+
+func (x *CollectionServiceListRequest) GetMediaId() string {
+	if x != nil {
+		return x.MediaId
 	}
 	return ""
 }
@@ -894,11 +902,12 @@ const file_archeic_v1_collection_proto_rawDesc = "" +
 	"updateTimeB\f\n" +
 	"\n" +
 	"_parent_idB\v\n" +
-	"\t_cover_id\"o\n" +
+	"\t_cover_id\"\x8a\x01\n" +
 	"\x1cCollectionServiceListRequest\x12\x1f\n" +
 	"\vcategory_id\x18\x01 \x01(\tR\n" +
 	"categoryId\x12 \n" +
-	"\tparent_id\x18\x02 \x01(\tH\x00R\bparentId\x88\x01\x01B\f\n" +
+	"\tparent_id\x18\x02 \x01(\tH\x00R\bparentId\x88\x01\x01\x12\x19\n" +
+	"\bmedia_id\x18\x03 \x01(\tR\amediaIdB\f\n" +
 	"\n" +
 	"_parent_id\"Y\n" +
 	"\x1dCollectionServiceListResponse\x128\n" +

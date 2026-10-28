@@ -32,6 +32,7 @@ service CollectionService {
 message CollectionServiceListRequest {
   string category_id = 1;
   optional string parent_id = 2;
+  string media_id = 3;
 }
 
 message CollectionServiceListResponse {

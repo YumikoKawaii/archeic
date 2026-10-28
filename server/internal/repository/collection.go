@@ -46,7 +46,15 @@ func (r *CollectionRepository) List(ctx context.Context, categoryID string, pare
 		q += `= ?`
 		args = append(args, *parentID)
 	}
-	rows, err := r.db.QueryContext(ctx, q+` ORDER BY name`, args...)
+	return r.query(ctx, q+` ORDER BY name`, args...)
+}
+
+func (r *CollectionRepository) ListByMedia(ctx context.Context, mediaID string) ([]model.Collection, error) {
+	return r.query(ctx, `SELECT `+collectionColumns+` FROM collections WHERE id IN (SELECT collection_id FROM items WHERE media_id = ?) ORDER BY name`, mediaID)
+}
+
+func (r *CollectionRepository) query(ctx context.Context, q string, args ...any) ([]model.Collection, error) {
+	rows, err := r.db.QueryContext(ctx, q, args...)
 	if err != nil {
 		return nil, err
 	}
