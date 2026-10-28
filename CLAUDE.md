@@ -149,3 +149,10 @@ Media and storage player. `server/` is Go + MySQL + RustFS (S3-compatible), `pre
 - Copy `.env.example` to `.env` and fill in credentials; `.env` is git-ignored and `docker-compose.yml` reads every secret from it. Never commit real credentials.
 - `docker compose up -d --build` in `archeic/`; the `migrate` service runs `migrate up` before `server` starts. App on `https://localhost:8443` (HTTP/2 over TLS; `:8080` redirects there), RustFS console on `http://localhost:9001`.
 - TLS: nginx reads `certs/server.crt` and `certs/server.key` (git-ignored), signed by a local CA in `certs/ca.crt`. Devices must trust `ca.crt` to load the app.
+
+## iOS
+
+- `ios/` is the native SwiftUI app (iOS 26+, Swift 6). It replaces `presentation/` as the client.
+- Talks to the server through nginx using the Connect JSON protocol in `ios/Archeic/API/Client.swift`; media loads from `/api/media/{id}/content`.
+- Source layout under `ios/Archeic/`: `API/`, `Shared/` (theme, thumbnails, app model, root view), `Features/<area>/`.
+- Server address is set in the app's Settings; devices must trust `certs/ca.crt`.
