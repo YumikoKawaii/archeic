@@ -52,6 +52,9 @@ services:
     build: ./presentation
     ports:
       - "8080:80"
+      - "8443:443"
+    volumes:
+      - ./certs:/etc/nginx/certs:ro
     depends_on:
       - server
 

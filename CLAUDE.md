@@ -147,4 +147,5 @@ Media and storage player. `server/` is Go + MySQL + RustFS (S3-compatible), `pre
 ## Running
 
 - Copy `.env.example` to `.env` and fill in credentials; `.env` is git-ignored and `docker-compose.yml` reads every secret from it. Never commit real credentials.
-- `docker compose up -d --build` in `archeic/`; the `migrate` service runs `migrate up` before `server` starts. App on `http://localhost:8080`, RustFS console on `http://localhost:9001`.
+- `docker compose up -d --build` in `archeic/`; the `migrate` service runs `migrate up` before `server` starts. App on `https://localhost:8443` (HTTP/2 over TLS; `:8080` redirects there), RustFS console on `http://localhost:9001`.
+- TLS: nginx reads `certs/server.crt` and `certs/server.key` (git-ignored), signed by a local CA in `certs/ca.crt`. Devices must trust `ca.crt` to load the app.
