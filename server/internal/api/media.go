@@ -15,7 +15,7 @@ import (
 var _ archeicv1connect.MediaServiceHandler = (*mediaService)(nil)
 
 type mediaService struct {
-	repo  Repository
+	repo  MediaRepository
 	blobs Blobs
 }
 

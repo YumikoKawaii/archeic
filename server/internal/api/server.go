@@ -11,11 +11,24 @@ import (
 	"github.com/yumikokawaii/archeic/internal/store"
 )
 
-type Repository interface {
+type MediaRepository interface {
 	Create(ctx context.Context, m *store.Media) error
 	List(ctx context.Context, kind string) ([]store.Media, error)
 	Get(ctx context.Context, id string) (*store.Media, error)
 	Delete(ctx context.Context, id string) error
+}
+
+type CategoryRepository interface {
+	CreateCategory(ctx context.Context, c *store.Category) error
+	ListCategories(ctx context.Context) ([]store.Category, error)
+	GetCategory(ctx context.Context, id string) (*store.Category, error)
+	UpdateCategory(ctx context.Context, c *store.Category) error
+	DeleteCategory(ctx context.Context, id string) error
+}
+
+type Repository interface {
+	MediaRepository
+	CategoryRepository
 }
 
 type Blobs interface {
@@ -35,15 +48,16 @@ func New(repo Repository, blobs Blobs, log *slog.Logger) *Server {
 }
 
 func (s *Server) Handler() http.Handler {
-	rpc := http.NewServeMux()
-	rpc.Handle(archeicv1connect.NewMediaServiceHandler(
-		&mediaService{repo: s.repo, blobs: s.blobs},
+	opts := []connect.HandlerOption{
 		connect.WithInterceptors(logging(s.log)),
 		connect.WithRecover(func(ctx context.Context, spec connect.Spec, _ http.Header, p any) error {
 			s.log.ErrorContext(ctx, "panic", "procedure", spec.Procedure, "panic", p)
 			return connect.NewError(connect.CodeInternal, nil)
 		}),
-	))
+	}
+	rpc := http.NewServeMux()
+	rpc.Handle(archeicv1connect.NewMediaServiceHandler(&mediaService{repo: s.repo, blobs: s.blobs}, opts...))
+	rpc.Handle(archeicv1connect.NewCategoryServiceHandler(&categoryService{repo: s.repo}, opts...))
 
 	mux := http.NewServeMux()
 	mux.Handle("/api/", http.StripPrefix("/api", rpc))

@@ -59,17 +59,12 @@ func Open(dsn string) (*Store, error) {
 func (s *Store) Close() error { return s.db.Close() }
 
 func (s *Store) Migrate(ctx context.Context) error {
-	_, err := s.db.ExecContext(ctx, `CREATE TABLE IF NOT EXISTS media (
-		id CHAR(36) PRIMARY KEY,
-		name VARCHAR(512) NOT NULL,
-		kind VARCHAR(16) NOT NULL,
-		content_type VARCHAR(128) NOT NULL,
-		size BIGINT NOT NULL,
-		object_key VARCHAR(512) NOT NULL,
-		created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-		INDEX idx_kind_created (kind, created_at)
-	)`)
-	return err
+	for _, stmt := range schema {
+		if _, err := s.db.ExecContext(ctx, stmt); err != nil {
+			return fmt.Errorf("migrating: %w", err)
+		}
+	}
+	return nil
 }
 
 func (s *Store) Create(ctx context.Context, m *Media) error {

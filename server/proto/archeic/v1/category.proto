@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package archeic.v1;
+
+import "google/protobuf/timestamp.proto";
+
+enum Layout {
+  LAYOUT_UNSPECIFIED = 0;
+  LAYOUT_GALLERY = 1;
+  LAYOUT_LIBRARY = 2;
+  LAYOUT_EPISODIC = 3;
+  LAYOUT_TIMELINE = 4;
+}
+
+message Category {
+  string id = 1;
+  string slug = 2;
+  string name = 3;
+  Layout layout = 4;
+  int32 position = 5;
+  google.protobuf.Timestamp create_time = 6;
+  google.protobuf.Timestamp update_time = 7;
+}
+
+service CategoryService {
+  rpc List(CategoryServiceListRequest) returns (CategoryServiceListResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+  rpc Get(CategoryServiceGetRequest) returns (CategoryServiceGetResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+  rpc Create(CategoryServiceCreateRequest) returns (CategoryServiceCreateResponse) {}
+  rpc Update(CategoryServiceUpdateRequest) returns (CategoryServiceUpdateResponse) {}
+  rpc Delete(CategoryServiceDeleteRequest) returns (CategoryServiceDeleteResponse) {}
+}
+
+message CategoryServiceListRequest {}
+
+message CategoryServiceListResponse {
+  repeated Category categories = 1;
+}
+
+message CategoryServiceGetRequest {
+  string id = 1;
+}
+
+message CategoryServiceGetResponse {
+  Category category = 1;
+}
+
+message CategoryServiceCreateRequest {
+  string slug = 1;
+  string name = 2;
+  Layout layout = 3;
+  int32 position = 4;
+}
+
+message CategoryServiceCreateResponse {
+  Category category = 1;
+}
+
+message CategoryServiceUpdateRequest {
+  string id = 1;
+  optional string slug = 2;
+  optional string name = 3;
+  optional Layout layout = 4;
+  optional int32 position = 5;
+}
+
+message CategoryServiceUpdateResponse {
+  Category category = 1;
+}
+
+message CategoryServiceDeleteRequest {
+  string id = 1;
+}
+
+message CategoryServiceDeleteResponse {}
