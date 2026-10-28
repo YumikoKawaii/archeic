@@ -139,4 +139,4 @@ Media and storage player. `server/` is Go + MySQL + RustFS (S3-compatible), `ios
 - `ios/` is the native SwiftUI app (iOS 26+, Swift 6) and the only client.
 - Talks to the server through nginx using the Connect JSON protocol in `ios/Archeic/API/Client.swift`; media loads from `/api/media/{id}/content`.
 - Source layout under `ios/Archeic/`: `API/`, `Shared/` (theme, thumbnails, app model, root view), `Features/<area>/`.
-- The app asks for the server address every time it launches, prefilled with the last one; devices must trust `certs/ca.crt`.
+- The app opens on a server dropdown every launch; its options are `Client.knownServers`, the first being the default. When the host's IP changes, add it there and to the SAN list of `certs/server.crt`. Devices must fully trust `certs/ca.crt`.
