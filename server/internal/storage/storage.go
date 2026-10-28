@@ -45,6 +45,17 @@ func (s *Storage) Open(ctx context.Context, key string) (io.ReadSeekCloser, erro
 	return s.client.GetObject(ctx, s.bucket, key, minio.GetObjectOptions{})
 }
 
+func (s *Storage) Exists(ctx context.Context, key string) (bool, error) {
+	_, err := s.client.StatObject(ctx, s.bucket, key, minio.StatObjectOptions{})
+	if err == nil {
+		return true, nil
+	}
+	if minio.ToErrorResponse(err).Code == "NoSuchKey" {
+		return false, nil
+	}
+	return false, err
+}
+
 func (s *Storage) Remove(ctx context.Context, key string) error {
 	return s.client.RemoveObject(ctx, s.bucket, key, minio.RemoveObjectOptions{})
 }

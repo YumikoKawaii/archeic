@@ -5,7 +5,8 @@ RUN go mod download
 COPY . .
 RUN CGO_ENABLED=0 go build -o /out/archeic ./cmd/archeic
 
-FROM gcr.io/distroless/static-debian12
+FROM alpine:3.22
+RUN apk add --no-cache ffmpeg
 WORKDIR /app
 COPY --from=build /out/archeic /app/archeic
 COPY --from=build /src/migrations /app/migrations

@@ -57,6 +57,9 @@ func (s *mediaService) Delete(ctx context.Context, req *connect.Request[archeicv
 		if err := tx.Media().Delete(ctx, id); err != nil {
 			return err
 		}
+		for _, size := range model.ThumbSizes {
+			_ = s.blobs.Remove(ctx, m.ThumbKey(size))
+		}
 		return s.blobs.Remove(ctx, m.ObjectKey)
 	})
 	if err != nil {

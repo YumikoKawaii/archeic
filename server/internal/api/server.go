@@ -14,17 +14,23 @@ import (
 type Blobs interface {
 	Put(ctx context.Context, key string, r io.Reader, size int64, contentType string) error
 	Open(ctx context.Context, key string) (io.ReadSeekCloser, error)
+	Exists(ctx context.Context, key string) (bool, error)
 	Remove(ctx context.Context, key string) error
 }
 
-type Server struct {
-	uow   *repository.UnitOfWork
-	blobs Blobs
-	log   *slog.Logger
+type Thumbnailer interface {
+	Make(ctx context.Context, src io.Reader, size int, video bool) ([]byte, error)
 }
 
-func New(uow *repository.UnitOfWork, blobs Blobs, log *slog.Logger) *Server {
-	return &Server{uow: uow, blobs: blobs, log: log}
+type Server struct {
+	uow    *repository.UnitOfWork
+	blobs  Blobs
+	thumbs Thumbnailer
+	log    *slog.Logger
+}
+
+func New(uow *repository.UnitOfWork, blobs Blobs, thumbs Thumbnailer, log *slog.Logger) *Server {
+	return &Server{uow: uow, blobs: blobs, thumbs: thumbs, log: log}
 }
 
 func (s *Server) Handler() http.Handler {
@@ -45,6 +51,7 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("GET /api/health", func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusOK) })
 	mux.HandleFunc("POST /api/media", s.upload)
 	mux.HandleFunc("GET /api/media/{id}/content", s.content)
+	mux.HandleFunc("GET /api/media/{id}/thumb", s.thumb)
 	return mux
 }
 

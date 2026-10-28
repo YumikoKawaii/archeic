@@ -1,6 +1,7 @@
 package model
 
 import (
+	"strconv"
 	"strings"
 	"time"
 )
@@ -33,4 +34,19 @@ func KindOf(contentType string) string {
 		return KindVideo
 	}
 	return ""
+}
+
+var ThumbSizes = []int{512, 1280}
+
+func ThumbSize(requested int) int {
+	for _, s := range ThumbSizes {
+		if requested <= s {
+			return s
+		}
+	}
+	return ThumbSizes[len(ThumbSizes)-1]
+}
+
+func (m *Media) ThumbKey(size int) string {
+	return "thumb/" + m.ID + "-" + strconv.Itoa(size) + ".jpg"
 }

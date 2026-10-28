@@ -4,12 +4,14 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"runtime"
 
 	"github.com/urfave/cli/v2"
 	"github.com/yumikokawaii/archeic/internal/api"
 	"github.com/yumikokawaii/archeic/internal/config"
 	"github.com/yumikokawaii/archeic/internal/repository"
 	"github.com/yumikokawaii/archeic/internal/storage"
+	"github.com/yumikokawaii/archeic/internal/thumbnail"
 )
 
 var (
@@ -69,7 +71,7 @@ func serverAction(c *cli.Context) error {
 
 	srv := &http.Server{
 		Addr:      cfg.Server.Addr,
-		Handler:   api.New(repository.NewUnitOfWork(db), blobs, log).Handler(),
+		Handler:   api.New(repository.NewUnitOfWork(db), blobs, thumbnail.New(runtime.NumCPU()), log).Handler(),
 		Protocols: protocols,
 	}
 	log.Info("archeic listening", "addr", cfg.Server.Addr)

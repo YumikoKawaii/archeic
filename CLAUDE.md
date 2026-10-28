@@ -107,7 +107,8 @@ Media and storage player. `server/` is Go + MySQL + RustFS (S3-compatible), `ios
 ### Storage
 
 - All object access goes through `internal/storage`; handlers never import the S3 SDK (`minio-go`, used as a generic S3 client with path-style addressing). Object storage is RustFS `rustfs/rustfs`, pinned to an exact release tag; config lives under `S3_*` env vars.
-- Object keys are `<kind>/<uuid><ext>`.
+- Object keys are `<kind>/<uuid><ext>`. Thumbnails are JPEGs at `thumb/<uuid>-<size>.jpg` (sizes in `model.ThumbSizes`), made on first request by `internal/thumbnail` with ffmpeg and removed with the media.
+- Clients load grids and covers from `/api/media/{id}/thumb?size=N`, never the original.
 - If a DB write fails after an upload, remove the object.
 
 ### Config
