@@ -121,8 +121,18 @@ Media and storage player. `server/` is Go + MySQL + MinIO, `presentation/` is Re
 
 ## Presentation
 
+- Visual style is Gallery minimal, dark: near-black background, media edge to edge in justified rows with 3px gaps, almost no chrome, names only on hover, one light-blue accent for primary actions, Figtree type. Colors come from the tokens in `src/styles.css`; no new literal colors.
 - Function components with hooks; strict TypeScript, no `any`.
-- All API calls go through `src/api.ts` using the generated Connect-ES client (`@connectrpc/connect-web`).
+- All API calls go through `src/api/client.ts` using the generated Connect-ES client (`@connectrpc/connect-web`).
+- Source layout under `presentation/src/`:
+  - `main.tsx`, `App.tsx`: entry and top-level shell only.
+  - `api/`: the API client. `gen/`: generated code, never edited.
+  - `layout/`: app chrome (sidebar, header pieces).
+  - `features/<area>/`: one folder per area (`library`, `category`, `collection`, `media`) holding its views and the components only it uses.
+  - `components/`: small components shared by more than one feature.
+  - `lib/`: non-UI helpers and shared types.
+  - `styles/`: global CSS.
+- Never put new files directly in `src/`; place them in the folder that matches their role.
 - Media is loaded from `/api/media/{id}/content`; never point the browser directly at MinIO.
 
 ## Git

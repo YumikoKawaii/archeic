@@ -1,15 +1,17 @@
-import { useEffect } from "react";
-import { contentUrl, Kind, type Media } from "./api";
+import { useEffect, type ReactNode } from "react";
+import { contentUrl, Kind, type Media } from "../../api/client";
+import { ConfirmButton } from "../../components";
 
 interface Props {
   media: Media;
+  extra?: ReactNode;
   onClose: () => void;
   onPrev: () => void;
   onNext: () => void;
   onDelete: () => void;
 }
 
-export default function Viewer({ media, onClose, onPrev, onNext, onDelete }: Props) {
+export default function Viewer({ media, extra, onClose, onPrev, onNext, onDelete }: Props) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -30,11 +32,13 @@ export default function Viewer({ media, onClose, onPrev, onNext, onDelete }: Pro
         )}
       </div>
       <div className="bar" onClick={(e) => e.stopPropagation()}>
-        <button onClick={onPrev}>‹</button>
+        <button type="button" aria-label="Previous" onClick={onPrev}>‹</button>
         <span>{media.name}</span>
+        {extra}
         <a href={contentUrl(media.id)} download={media.name}>Download</a>
-        <button onClick={onDelete}>Delete</button>
-        <button onClick={onNext}>›</button>
+        <ConfirmButton label="Delete" onConfirm={onDelete} />
+        <button type="button" aria-label="Close" onClick={onClose}>Close</button>
+        <button type="button" aria-label="Next" onClick={onNext}>›</button>
       </div>
     </div>
   );

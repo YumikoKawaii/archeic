@@ -1,80 +1,79 @@
-import { useCallback, useEffect, useState } from "react";
-import { contentUrl, deleteMedia, Kind, listMedia, type Media, uploadMedia } from "./api";
-import Viewer from "./Viewer";
-
-const filters: [Kind, string][] = [
-  [Kind.UNSPECIFIED, "all"],
-  [Kind.IMAGE, "image"],
-  [Kind.VIDEO, "video"],
-];
+import { useEffect, useState } from "react";
+import { addItems, uploadMedia } from "./api/client";
+import CategoryView from "./features/category/CategoryView";
+import CollectionView from "./features/collection/CollectionView";
+import LibraryView from "./features/library/LibraryView";
+import { notify, onNotice, run } from "./lib/notify";
+import Sidebar from "./layout/Sidebar";
+import type { View } from "./lib/view";
 
 export default function App() {
-  const [items, setItems] = useState<Media[]>([]);
-  const [filter, setFilter] = useState<Kind>(Kind.UNSPECIFIED);
-  const [active, setActive] = useState<number | null>(null);
+  const [view, setView] = useState<View>({ kind: "library" });
+  const [version, setVersion] = useState(0);
   const [busy, setBusy] = useState(false);
+  const [notice, setNotice] = useState("");
 
-  const load = useCallback(() => listMedia(filter).then(setItems), [filter]);
+  const refresh = () => setVersion((v) => v + 1);
+
+  useEffect(() => onNotice(setNotice), []);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    if (!notice) return;
+    const t = setTimeout(() => setNotice(""), 4000);
+    return () => clearTimeout(t);
+  }, [notice]);
 
   const onUpload = async (files: FileList | null) => {
-    if (!files) return;
+    if (!files?.length) return;
+    const target = view.kind === "collection" ? view.id : "";
     setBusy(true);
-    try {
-      for (const f of Array.from(files)) await uploadMedia(f);
-      await load();
-    } finally {
-      setBusy(false);
-    }
+    await run(async () => {
+      const ids: string[] = [];
+      for (const f of Array.from(files)) ids.push(await uploadMedia(f));
+      if (target) await addItems(target, ids);
+      notify(`Uploaded ${ids.length} ${ids.length === 1 ? "file" : "files"}`);
+    });
+    setBusy(false);
+    refresh();
   };
 
-  const onDelete = async (id: string) => {
-    await deleteMedia(id);
-    setActive(null);
-    await load();
-  };
+  const props = { version, onNavigate: setView, onChanged: refresh };
 
   return (
-    <div className="app">
-      <header>
-        <h1>Archeic</h1>
-        <nav>
-          {filters.map(([k, label]) => (
-            <button key={label} className={filter === k ? "on" : ""} onClick={() => setFilter(k)}>
-              {label}
-            </button>
-          ))}
-        </nav>
+    <div className="shell">
+      <header className="top">
+        <h1>
+          <button type="button" onClick={() => setView({ kind: "library" })}>archeic</button>
+        </h1>
         <label className="upload">
-          {busy ? "Uploading…" : "Upload"}
-          <input type="file" multiple accept="image/*,video/*" hidden onChange={(e) => onUpload(e.target.files)} />
+          {busy ? "Uploading…" : view.kind === "collection" ? "Upload here" : "Upload"}
+          <input
+            id="upload"
+            type="file"
+            multiple
+            accept="image/*,video/*"
+            hidden
+            disabled={busy}
+            onChange={(e) => {
+              onUpload(e.target.files);
+              e.target.value = "";
+            }}
+          />
         </label>
       </header>
 
-      <main className="grid">
-        {items.map((m, i) => (
-          <button key={m.id} className="tile" onClick={() => setActive(i)}>
-            {m.kind === Kind.IMAGE ? (
-              <img src={contentUrl(m.id)} alt={m.name} loading="lazy" />
-            ) : (
-              <video src={`${contentUrl(m.id)}#t=0.1`} preload="metadata" muted />
-            )}
-            <span>{m.name}</span>
-          </button>
-        ))}
+      <Sidebar view={view} {...props} />
+
+      <main className="content">
+        {view.kind === "library" && <LibraryView version={version} onChanged={refresh} />}
+        {view.kind === "category" && <CategoryView key={view.id} id={view.id} {...props} />}
+        {view.kind === "collection" && <CollectionView key={view.id} id={view.id} {...props} />}
       </main>
 
-      {active !== null && items[active] && (
-        <Viewer
-          media={items[active]}
-          onClose={() => setActive(null)}
-          onPrev={() => setActive((active - 1 + items.length) % items.length)}
-          onNext={() => setActive((active + 1) % items.length)}
-          onDelete={() => onDelete(items[active].id)}
-        />
+      {notice && (
+        <div className="toast" role="status">
+          {notice}
+        </div>
       )}
     </div>
   );
