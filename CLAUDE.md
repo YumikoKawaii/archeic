@@ -90,6 +90,7 @@ Media and storage player. `server/` is Go + MySQL + RustFS (S3-compatible), `pre
 
 - `database/sql` with the MySQL driver; parameterized queries only, never string-concatenated values.
 - Always `defer rows.Close()` and check `rows.Err()`.
+- Deletes are hard deletes: `DELETE FROM`, with related rows removed by `ON DELETE CASCADE` / `SET NULL` foreign keys. No soft delete, no `deleted_at` / `is_deleted` columns, no trash or restore. Deleting media also removes its object from storage in the same `Tx`.
 - Map `sql.ErrNoRows` to `repository.ErrNotFound` at the repository boundary.
 
 ### Unit of work
