@@ -38,6 +38,7 @@ struct CollectionView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) { UploadButton(collectionId: collection.id) }
+                .sharedBackgroundVisibility(.hidden)
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     Button { selecting.toggle() } label: {
@@ -50,6 +51,7 @@ struct CollectionView: View {
                     Image(systemName: "ellipsis")
                 }
             }
+            .sharedBackgroundVisibility(.hidden)
         }
         .sheet(isPresented: $adding) {
             NameSheet(title: "New sub-collection", placeholder: "Day 1, Episode 2…") { name in

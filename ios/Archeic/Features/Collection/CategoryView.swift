@@ -38,6 +38,7 @@ struct CategoryView: View {
                     Image(systemName: "ellipsis")
                 }
             }
+            .sharedBackgroundVisibility(.hidden)
         }
         .sheet(isPresented: $adding) {
             NameSheet(title: "New collection", placeholder: "Kyoto 2025, Season 1…") { name in

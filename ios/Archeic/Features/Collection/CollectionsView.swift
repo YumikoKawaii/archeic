@@ -80,6 +80,7 @@ struct CollectionsView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Button { adding = true } label: { Image(systemName: "plus") }
             }
+            .sharedBackgroundVisibility(.hidden)
         }
         .sheet(isPresented: $adding) { NewCategorySheet().presentationDetents([.height(300)]) }
         .refreshable { await load() }

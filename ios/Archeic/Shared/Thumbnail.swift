@@ -75,7 +75,7 @@ struct Thumbnail: View {
                     Image(systemName: "play.fill")
                         .font(.system(size: 10, weight: .bold))
                         .padding(6)
-                        .background(.ultraThinMaterial, in: Circle())
+                        .background(Color.black.opacity(0.5), in: Circle())
                         .padding(6)
                 }
             }

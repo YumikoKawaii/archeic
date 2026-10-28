@@ -37,7 +37,9 @@ struct HomeView: View {
                 }
                 .accessibilityLabel("Disconnect")
             }
+            .sharedBackgroundVisibility(.hidden)
             ToolbarItem(placement: .topBarTrailing) { UploadButton() }
+                .sharedBackgroundVisibility(.hidden)
         }
         .fullScreenCover(item: $viewing) { m in Viewer(items: media, start: m) }
         .task(id: model.version) { await load() }

@@ -38,7 +38,9 @@ struct LibraryView: View {
                 Button(selecting ? "Done" : "Select") { selecting.toggle() }
                     .disabled(items.isEmpty)
             }
+            .sharedBackgroundVisibility(.hidden)
             ToolbarItem(placement: .topBarTrailing) { UploadButton() }
+                .sharedBackgroundVisibility(.hidden)
         }
         .refreshable { await load() }
         .task(id: "\(filter.rawValue)-\(model.version)") { await load() }

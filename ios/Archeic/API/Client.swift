@@ -169,6 +169,13 @@ final class Client {
         let _: Res = try await call("CollectionService", "RemoveItems", Req(collectionId: collectionId, mediaIds: mediaIds))
     }
 
+    func collections(containing mediaId: String) async throws -> [Collection] {
+        struct Req: Encodable { let mediaId: String }
+        struct Res: Decodable { var collections: [Collection]? }
+        let res: Res = try await call("CollectionService", "List", Req(mediaId: mediaId))
+        return res.collections ?? []
+    }
+
     func allCollections() async throws -> [(Category, [Collection])] {
         var out: [(Category, [Collection])] = []
         for c in try await categories() {
