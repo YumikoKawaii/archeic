@@ -1,6 +1,6 @@
 # archeic
 
-Media and storage player. `server/` is Go + MySQL + MinIO, `presentation/` is React + Vite + TypeScript. No authentication.
+Media and storage player. `server/` is Go + MySQL + RustFS (S3-compatible), `presentation/` is React + Vite + TypeScript. No authentication.
 
 # Coding rules
 
@@ -99,13 +99,13 @@ Media and storage player. `server/` is Go + MySQL + MinIO, `presentation/` is Re
 - Any operation with more than one statement, or a read that decides a write, runs inside `uow.Tx(ctx, func(tx *repository.UnitOfWork) error { ... })` and uses only `tx` repositories inside the closure.
 - Use `LockX` methods (`SELECT ... FOR UPDATE`) inside `Tx` when a read decides a write.
 - Business rules (validation, ordering, hierarchy checks) live in the caller (`api`) or in `model`, not in repositories.
-- Side effects outside MySQL (MinIO) run last inside the `Tx` closure so a failure rolls the database back.
+- Side effects outside MySQL (object storage) run last inside the `Tx` closure so a failure rolls the database back.
 - Schema changes are SQL files in `server/migrations/`, run with golang-migrate: `NNNNNN_<description>.up.sql` plus a matching `.down.sql`, one change per file, never edit an applied migration.
 - Apply with `archeic migrate up` (roll back with `archeic migrate down`); the server never migrates on start.
 
 ### Storage
 
-- All object access goes through `internal/storage`; handlers never import the MinIO SDK.
+- All object access goes through `internal/storage`; handlers never import the S3 SDK (`minio-go`, used as a generic S3 client with path-style addressing). Object storage is RustFS `rustfs/rustfs`, pinned to an exact release tag; config lives under `S3_*` env vars.
 - Object keys are `<kind>/<uuid><ext>`.
 - If a DB write fails after an upload, remove the object.
 
@@ -133,7 +133,7 @@ Media and storage player. `server/` is Go + MySQL + MinIO, `presentation/` is Re
   - `lib/`: non-UI helpers and shared types.
   - `styles/`: global CSS.
 - Never put new files directly in `src/`; place them in the folder that matches their role.
-- Media is loaded from `/api/media/{id}/content`; never point the browser directly at MinIO.
+- Media is loaded from `/api/media/{id}/content`; never point the browser directly at object storage.
 
 ## Git
 
@@ -145,4 +145,4 @@ Media and storage player. `server/` is Go + MySQL + MinIO, `presentation/` is Re
 
 ## Running
 
-- `docker compose up -d --build` in `archeic/`; the `migrate` service runs `migrate up` before `server` starts. App on `http://localhost:8080`, MinIO console on `http://localhost:9001`.
+- `docker compose up -d --build` in `archeic/`; the `migrate` service runs `migrate up` before `server` starts. App on `http://localhost:8080`, RustFS console on `http://localhost:9001`.

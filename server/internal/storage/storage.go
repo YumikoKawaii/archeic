@@ -15,10 +15,11 @@ type Storage struct {
 	bucket string
 }
 
-func New(ctx context.Context, cfg config.Minio) (*Storage, error) {
+func New(ctx context.Context, cfg config.S3) (*Storage, error) {
 	c, err := minio.New(cfg.Endpoint, &minio.Options{
-		Creds:  credentials.NewStaticV4(cfg.AccessKey, cfg.SecretKey, ""),
-		Secure: cfg.UseSSL,
+		Creds:        credentials.NewStaticV4(cfg.AccessKey, cfg.SecretKey, ""),
+		Secure:       cfg.UseSSL,
+		BucketLookup: minio.BucketLookupPath,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("creating minio client: %w", err)

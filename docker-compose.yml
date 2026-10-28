@@ -11,14 +11,14 @@ services:
     ports:
       - "3306:3306"
 
-  minio:
-    image: minio/minio:latest
-    command: server /data --console-address ":9001"
+  rustfs:
+    image: rustfs/rustfs:1.0.4
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      RUSTFS_ACCESS_KEY: archeic
+      RUSTFS_SECRET_KEY: archeic-secret
+      RUSTFS_CONSOLE_ENABLE: "true"
     volumes:
-      - minio-data:/data
+      - rustfs-data:/data
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -36,14 +36,14 @@ services:
     command: ["server"]
     environment:
       MYSQL_DSN: archeic:archeic@tcp(mysql:3306)/archeic?parseTime=true
-      MINIO_ENDPOINT: minio:9000
-      MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin
-      MINIO_BUCKET: archeic
+      S3_ENDPOINT: rustfs:9000
+      S3_ACCESS_KEY: archeic
+      S3_SECRET_KEY: archeic-secret
+      S3_BUCKET: archeic
     depends_on:
       migrate:
         condition: service_completed_successfully
-      minio:
+      rustfs:
         condition: service_started
 
   presentation:
@@ -55,4 +55,4 @@ services:
 
 volumes:
   mysql-data:
-  minio-data:
+  rustfs-data:

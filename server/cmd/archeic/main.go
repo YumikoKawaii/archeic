@@ -58,7 +58,7 @@ func serverAction(c *cli.Context) error {
 	}
 	defer db.Close()
 
-	blobs, err := storage.New(ctx, cfg.Minio)
+	blobs, err := storage.New(ctx, cfg.S3)
 	if err != nil {
 		return err
 	}
