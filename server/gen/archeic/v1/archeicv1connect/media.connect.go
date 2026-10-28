@@ -43,9 +43,9 @@ const (
 
 // MediaServiceClient is a client for the archeic.v1.MediaService service.
 type MediaServiceClient interface {
-	List(context.Context, *connect.Request[v1.ListRequest]) (*connect.Response[v1.ListResponse], error)
-	Get(context.Context, *connect.Request[v1.GetRequest]) (*connect.Response[v1.GetResponse], error)
-	Delete(context.Context, *connect.Request[v1.DeleteRequest]) (*connect.Response[v1.DeleteResponse], error)
+	List(context.Context, *connect.Request[v1.MediaServiceListRequest]) (*connect.Response[v1.MediaServiceListResponse], error)
+	Get(context.Context, *connect.Request[v1.MediaServiceGetRequest]) (*connect.Response[v1.MediaServiceGetResponse], error)
+	Delete(context.Context, *connect.Request[v1.MediaServiceDeleteRequest]) (*connect.Response[v1.MediaServiceDeleteResponse], error)
 }
 
 // NewMediaServiceClient constructs a client for the archeic.v1.MediaService service. By default, it
@@ -59,21 +59,21 @@ func NewMediaServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 	baseURL = strings.TrimRight(baseURL, "/")
 	mediaServiceMethods := v1.File_archeic_v1_media_proto.Services().ByName("MediaService").Methods()
 	return &mediaServiceClient{
-		list: connect.NewClient[v1.ListRequest, v1.ListResponse](
+		list: connect.NewClient[v1.MediaServiceListRequest, v1.MediaServiceListResponse](
 			httpClient,
 			baseURL+MediaServiceListProcedure,
 			connect.WithSchema(mediaServiceMethods.ByName("List")),
 			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
-		get: connect.NewClient[v1.GetRequest, v1.GetResponse](
+		get: connect.NewClient[v1.MediaServiceGetRequest, v1.MediaServiceGetResponse](
 			httpClient,
 			baseURL+MediaServiceGetProcedure,
 			connect.WithSchema(mediaServiceMethods.ByName("Get")),
 			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
-		delete: connect.NewClient[v1.DeleteRequest, v1.DeleteResponse](
+		delete: connect.NewClient[v1.MediaServiceDeleteRequest, v1.MediaServiceDeleteResponse](
 			httpClient,
 			baseURL+MediaServiceDeleteProcedure,
 			connect.WithSchema(mediaServiceMethods.ByName("Delete")),
@@ -84,31 +84,31 @@ func NewMediaServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 
 // mediaServiceClient implements MediaServiceClient.
 type mediaServiceClient struct {
-	list   *connect.Client[v1.ListRequest, v1.ListResponse]
-	get    *connect.Client[v1.GetRequest, v1.GetResponse]
-	delete *connect.Client[v1.DeleteRequest, v1.DeleteResponse]
+	list   *connect.Client[v1.MediaServiceListRequest, v1.MediaServiceListResponse]
+	get    *connect.Client[v1.MediaServiceGetRequest, v1.MediaServiceGetResponse]
+	delete *connect.Client[v1.MediaServiceDeleteRequest, v1.MediaServiceDeleteResponse]
 }
 
 // List calls archeic.v1.MediaService.List.
-func (c *mediaServiceClient) List(ctx context.Context, req *connect.Request[v1.ListRequest]) (*connect.Response[v1.ListResponse], error) {
+func (c *mediaServiceClient) List(ctx context.Context, req *connect.Request[v1.MediaServiceListRequest]) (*connect.Response[v1.MediaServiceListResponse], error) {
 	return c.list.CallUnary(ctx, req)
 }
 
 // Get calls archeic.v1.MediaService.Get.
-func (c *mediaServiceClient) Get(ctx context.Context, req *connect.Request[v1.GetRequest]) (*connect.Response[v1.GetResponse], error) {
+func (c *mediaServiceClient) Get(ctx context.Context, req *connect.Request[v1.MediaServiceGetRequest]) (*connect.Response[v1.MediaServiceGetResponse], error) {
 	return c.get.CallUnary(ctx, req)
 }
 
 // Delete calls archeic.v1.MediaService.Delete.
-func (c *mediaServiceClient) Delete(ctx context.Context, req *connect.Request[v1.DeleteRequest]) (*connect.Response[v1.DeleteResponse], error) {
+func (c *mediaServiceClient) Delete(ctx context.Context, req *connect.Request[v1.MediaServiceDeleteRequest]) (*connect.Response[v1.MediaServiceDeleteResponse], error) {
 	return c.delete.CallUnary(ctx, req)
 }
 
 // MediaServiceHandler is an implementation of the archeic.v1.MediaService service.
 type MediaServiceHandler interface {
-	List(context.Context, *connect.Request[v1.ListRequest]) (*connect.Response[v1.ListResponse], error)
-	Get(context.Context, *connect.Request[v1.GetRequest]) (*connect.Response[v1.GetResponse], error)
-	Delete(context.Context, *connect.Request[v1.DeleteRequest]) (*connect.Response[v1.DeleteResponse], error)
+	List(context.Context, *connect.Request[v1.MediaServiceListRequest]) (*connect.Response[v1.MediaServiceListResponse], error)
+	Get(context.Context, *connect.Request[v1.MediaServiceGetRequest]) (*connect.Response[v1.MediaServiceGetResponse], error)
+	Delete(context.Context, *connect.Request[v1.MediaServiceDeleteRequest]) (*connect.Response[v1.MediaServiceDeleteResponse], error)
 }
 
 // NewMediaServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -155,14 +155,14 @@ func NewMediaServiceHandler(svc MediaServiceHandler, opts ...connect.HandlerOpti
 // UnimplementedMediaServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedMediaServiceHandler struct{}
 
-func (UnimplementedMediaServiceHandler) List(context.Context, *connect.Request[v1.ListRequest]) (*connect.Response[v1.ListResponse], error) {
+func (UnimplementedMediaServiceHandler) List(context.Context, *connect.Request[v1.MediaServiceListRequest]) (*connect.Response[v1.MediaServiceListResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("archeic.v1.MediaService.List is not implemented"))
 }
 
-func (UnimplementedMediaServiceHandler) Get(context.Context, *connect.Request[v1.GetRequest]) (*connect.Response[v1.GetResponse], error) {
+func (UnimplementedMediaServiceHandler) Get(context.Context, *connect.Request[v1.MediaServiceGetRequest]) (*connect.Response[v1.MediaServiceGetResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("archeic.v1.MediaService.Get is not implemented"))
 }
 
-func (UnimplementedMediaServiceHandler) Delete(context.Context, *connect.Request[v1.DeleteRequest]) (*connect.Response[v1.DeleteResponse], error) {
+func (UnimplementedMediaServiceHandler) Delete(context.Context, *connect.Request[v1.MediaServiceDeleteRequest]) (*connect.Response[v1.MediaServiceDeleteResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("archeic.v1.MediaService.Delete is not implemented"))
 }

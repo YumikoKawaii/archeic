@@ -52,7 +52,7 @@ Media and storage player. `server/` is Go + MySQL + MinIO, `presentation/` is Re
 
 - API is Connect RPC (`connectrpc.com/connect`) with protobuf definitions in `server/proto/archeic/v1/*.proto`.
 - Code generation with `buf` (`buf.yaml`, `buf.gen.yaml`); generated code lives in `server/gen/` and is never edited by hand.
-- Services follow `<Resource>Service` naming with `Get`, `List`, `Create`, `Update`, `Delete` RPCs; request/response messages are `<Rpc>Request` / `<Rpc>Response`.
+- Services follow `<Resource>Service` naming with `Get`, `List`, `Create`, `Update`, `Delete` RPCs; request/response messages are `<Service><Rpc>Request` / `<Service><Rpc>Response` (e.g. `MediaServiceListRequest`) so `buf lint` passes with several services in one package.
 - Handlers implement the generated `<Service>Handler` interface, convert proto messages to domain types at the boundary, and never leak proto types into `store` or `storage`.
 - Return errors with `connect.NewError(connect.Code..., err)`; map `store.ErrNotFound` to `connect.CodeNotFound`, validation failures to `connect.CodeInvalidArgument`.
 - Use interceptors (`connect.WithInterceptors`) for cross-cutting concerns (logging, recovery, validation), not per-handler code.

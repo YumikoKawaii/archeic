@@ -19,7 +19,7 @@ type mediaService struct {
 	blobs Blobs
 }
 
-func (s *mediaService) List(ctx context.Context, req *connect.Request[archeicv1.ListRequest]) (*connect.Response[archeicv1.ListResponse], error) {
+func (s *mediaService) List(ctx context.Context, req *connect.Request[archeicv1.MediaServiceListRequest]) (*connect.Response[archeicv1.MediaServiceListResponse], error) {
 	items, err := s.repo.List(ctx, kindFromProto(req.Msg.GetKind()))
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, fmt.Errorf("listing media: %w", err))
@@ -28,18 +28,18 @@ func (s *mediaService) List(ctx context.Context, req *connect.Request[archeicv1.
 	for _, m := range items {
 		out = append(out, toProto(&m))
 	}
-	return connect.NewResponse(&archeicv1.ListResponse{Media: out}), nil
+	return connect.NewResponse(&archeicv1.MediaServiceListResponse{Media: out}), nil
 }
 
-func (s *mediaService) Get(ctx context.Context, req *connect.Request[archeicv1.GetRequest]) (*connect.Response[archeicv1.GetResponse], error) {
+func (s *mediaService) Get(ctx context.Context, req *connect.Request[archeicv1.MediaServiceGetRequest]) (*connect.Response[archeicv1.MediaServiceGetResponse], error) {
 	m, err := s.find(ctx, req.Msg.GetId())
 	if err != nil {
 		return nil, err
 	}
-	return connect.NewResponse(&archeicv1.GetResponse{Media: toProto(m)}), nil
+	return connect.NewResponse(&archeicv1.MediaServiceGetResponse{Media: toProto(m)}), nil
 }
 
-func (s *mediaService) Delete(ctx context.Context, req *connect.Request[archeicv1.DeleteRequest]) (*connect.Response[archeicv1.DeleteResponse], error) {
+func (s *mediaService) Delete(ctx context.Context, req *connect.Request[archeicv1.MediaServiceDeleteRequest]) (*connect.Response[archeicv1.MediaServiceDeleteResponse], error) {
 	m, err := s.find(ctx, req.Msg.GetId())
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ func (s *mediaService) Delete(ctx context.Context, req *connect.Request[archeicv
 	if err := s.repo.Delete(ctx, m.ID); err != nil {
 		return nil, connect.NewError(connect.CodeInternal, fmt.Errorf("deleting media: %w", err))
 	}
-	return connect.NewResponse(&archeicv1.DeleteResponse{}), nil
+	return connect.NewResponse(&archeicv1.MediaServiceDeleteResponse{}), nil
 }
 
 func (s *mediaService) find(ctx context.Context, id string) (*store.Media, error) {

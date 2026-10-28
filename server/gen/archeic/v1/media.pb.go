@@ -155,27 +155,27 @@ func (x *Media) GetCreateTime() *timestamppb.Timestamp {
 	return nil
 }
 
-type ListRequest struct {
+type MediaServiceListRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Kind          Kind                   `protobuf:"varint,1,opt,name=kind,proto3,enum=archeic.v1.Kind" json:"kind,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListRequest) Reset() {
-	*x = ListRequest{}
+func (x *MediaServiceListRequest) Reset() {
+	*x = MediaServiceListRequest{}
 	mi := &file_archeic_v1_media_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListRequest) String() string {
+func (x *MediaServiceListRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListRequest) ProtoMessage() {}
+func (*MediaServiceListRequest) ProtoMessage() {}
 
-func (x *ListRequest) ProtoReflect() protoreflect.Message {
+func (x *MediaServiceListRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_archeic_v1_media_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -187,39 +187,39 @@ func (x *ListRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListRequest.ProtoReflect.Descriptor instead.
-func (*ListRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use MediaServiceListRequest.ProtoReflect.Descriptor instead.
+func (*MediaServiceListRequest) Descriptor() ([]byte, []int) {
 	return file_archeic_v1_media_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ListRequest) GetKind() Kind {
+func (x *MediaServiceListRequest) GetKind() Kind {
 	if x != nil {
 		return x.Kind
 	}
 	return Kind_KIND_UNSPECIFIED
 }
 
-type ListResponse struct {
+type MediaServiceListResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Media         []*Media               `protobuf:"bytes,1,rep,name=media,proto3" json:"media,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListResponse) Reset() {
-	*x = ListResponse{}
+func (x *MediaServiceListResponse) Reset() {
+	*x = MediaServiceListResponse{}
 	mi := &file_archeic_v1_media_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListResponse) String() string {
+func (x *MediaServiceListResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListResponse) ProtoMessage() {}
+func (*MediaServiceListResponse) ProtoMessage() {}
 
-func (x *ListResponse) ProtoReflect() protoreflect.Message {
+func (x *MediaServiceListResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_archeic_v1_media_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -231,39 +231,39 @@ func (x *ListResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListResponse.ProtoReflect.Descriptor instead.
-func (*ListResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use MediaServiceListResponse.ProtoReflect.Descriptor instead.
+func (*MediaServiceListResponse) Descriptor() ([]byte, []int) {
 	return file_archeic_v1_media_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ListResponse) GetMedia() []*Media {
+func (x *MediaServiceListResponse) GetMedia() []*Media {
 	if x != nil {
 		return x.Media
 	}
 	return nil
 }
 
-type GetRequest struct {
+type MediaServiceGetRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetRequest) Reset() {
-	*x = GetRequest{}
+func (x *MediaServiceGetRequest) Reset() {
+	*x = MediaServiceGetRequest{}
 	mi := &file_archeic_v1_media_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetRequest) String() string {
+func (x *MediaServiceGetRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetRequest) ProtoMessage() {}
+func (*MediaServiceGetRequest) ProtoMessage() {}
 
-func (x *GetRequest) ProtoReflect() protoreflect.Message {
+func (x *MediaServiceGetRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_archeic_v1_media_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -275,39 +275,39 @@ func (x *GetRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetRequest.ProtoReflect.Descriptor instead.
-func (*GetRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use MediaServiceGetRequest.ProtoReflect.Descriptor instead.
+func (*MediaServiceGetRequest) Descriptor() ([]byte, []int) {
 	return file_archeic_v1_media_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *GetRequest) GetId() string {
+func (x *MediaServiceGetRequest) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-type GetResponse struct {
+type MediaServiceGetResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Media         *Media                 `protobuf:"bytes,1,opt,name=media,proto3" json:"media,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetResponse) Reset() {
-	*x = GetResponse{}
+func (x *MediaServiceGetResponse) Reset() {
+	*x = MediaServiceGetResponse{}
 	mi := &file_archeic_v1_media_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetResponse) String() string {
+func (x *MediaServiceGetResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetResponse) ProtoMessage() {}
+func (*MediaServiceGetResponse) ProtoMessage() {}
 
-func (x *GetResponse) ProtoReflect() protoreflect.Message {
+func (x *MediaServiceGetResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_archeic_v1_media_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -319,39 +319,39 @@ func (x *GetResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetResponse.ProtoReflect.Descriptor instead.
-func (*GetResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use MediaServiceGetResponse.ProtoReflect.Descriptor instead.
+func (*MediaServiceGetResponse) Descriptor() ([]byte, []int) {
 	return file_archeic_v1_media_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *GetResponse) GetMedia() *Media {
+func (x *MediaServiceGetResponse) GetMedia() *Media {
 	if x != nil {
 		return x.Media
 	}
 	return nil
 }
 
-type DeleteRequest struct {
+type MediaServiceDeleteRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *DeleteRequest) Reset() {
-	*x = DeleteRequest{}
+func (x *MediaServiceDeleteRequest) Reset() {
+	*x = MediaServiceDeleteRequest{}
 	mi := &file_archeic_v1_media_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *DeleteRequest) String() string {
+func (x *MediaServiceDeleteRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DeleteRequest) ProtoMessage() {}
+func (*MediaServiceDeleteRequest) ProtoMessage() {}
 
-func (x *DeleteRequest) ProtoReflect() protoreflect.Message {
+func (x *MediaServiceDeleteRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_archeic_v1_media_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -363,38 +363,38 @@ func (x *DeleteRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteRequest.ProtoReflect.Descriptor instead.
-func (*DeleteRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use MediaServiceDeleteRequest.ProtoReflect.Descriptor instead.
+func (*MediaServiceDeleteRequest) Descriptor() ([]byte, []int) {
 	return file_archeic_v1_media_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *DeleteRequest) GetId() string {
+func (x *MediaServiceDeleteRequest) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-type DeleteResponse struct {
+type MediaServiceDeleteResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *DeleteResponse) Reset() {
-	*x = DeleteResponse{}
+func (x *MediaServiceDeleteResponse) Reset() {
+	*x = MediaServiceDeleteResponse{}
 	mi := &file_archeic_v1_media_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *DeleteResponse) String() string {
+func (x *MediaServiceDeleteResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DeleteResponse) ProtoMessage() {}
+func (*MediaServiceDeleteResponse) ProtoMessage() {}
 
-func (x *DeleteResponse) ProtoReflect() protoreflect.Message {
+func (x *MediaServiceDeleteResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_archeic_v1_media_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -406,8 +406,8 @@ func (x *DeleteResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteResponse.ProtoReflect.Descriptor instead.
-func (*DeleteResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use MediaServiceDeleteResponse.ProtoReflect.Descriptor instead.
+func (*MediaServiceDeleteResponse) Descriptor() ([]byte, []int) {
 	return file_archeic_v1_media_proto_rawDescGZIP(), []int{6}
 }
 
@@ -424,29 +424,28 @@ const file_archeic_v1_media_proto_rawDesc = "" +
 	"\fcontent_type\x18\x04 \x01(\tR\vcontentType\x12\x12\n" +
 	"\x04size\x18\x05 \x01(\x03R\x04size\x12;\n" +
 	"\vcreate_time\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"createTime\"3\n" +
-	"\vListRequest\x12$\n" +
-	"\x04kind\x18\x01 \x01(\x0e2\x10.archeic.v1.KindR\x04kind\"7\n" +
-	"\fListResponse\x12'\n" +
-	"\x05media\x18\x01 \x03(\v2\x11.archeic.v1.MediaR\x05media\"\x1c\n" +
-	"\n" +
-	"GetRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"6\n" +
-	"\vGetResponse\x12'\n" +
-	"\x05media\x18\x01 \x01(\v2\x11.archeic.v1.MediaR\x05media\"\x1f\n" +
-	"\rDeleteRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"\x10\n" +
-	"\x0eDeleteResponse*<\n" +
+	"createTime\"?\n" +
+	"\x17MediaServiceListRequest\x12$\n" +
+	"\x04kind\x18\x01 \x01(\x0e2\x10.archeic.v1.KindR\x04kind\"C\n" +
+	"\x18MediaServiceListResponse\x12'\n" +
+	"\x05media\x18\x01 \x03(\v2\x11.archeic.v1.MediaR\x05media\"(\n" +
+	"\x16MediaServiceGetRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"B\n" +
+	"\x17MediaServiceGetResponse\x12'\n" +
+	"\x05media\x18\x01 \x01(\v2\x11.archeic.v1.MediaR\x05media\"+\n" +
+	"\x19MediaServiceDeleteRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\x1c\n" +
+	"\x1aMediaServiceDeleteResponse*<\n" +
 	"\x04Kind\x12\x14\n" +
 	"\x10KIND_UNSPECIFIED\x10\x00\x12\x0e\n" +
 	"\n" +
 	"KIND_IMAGE\x10\x01\x12\x0e\n" +
 	"\n" +
-	"KIND_VIDEO\x10\x022\xce\x01\n" +
-	"\fMediaService\x12>\n" +
-	"\x04List\x12\x17.archeic.v1.ListRequest\x1a\x18.archeic.v1.ListResponse\"\x03\x90\x02\x01\x12;\n" +
-	"\x03Get\x12\x16.archeic.v1.GetRequest\x1a\x17.archeic.v1.GetResponse\"\x03\x90\x02\x01\x12A\n" +
-	"\x06Delete\x12\x19.archeic.v1.DeleteRequest\x1a\x1a.archeic.v1.DeleteResponse\"\x00B\x9f\x01\n" +
+	"KIND_VIDEO\x10\x022\x96\x02\n" +
+	"\fMediaService\x12V\n" +
+	"\x04List\x12#.archeic.v1.MediaServiceListRequest\x1a$.archeic.v1.MediaServiceListResponse\"\x03\x90\x02\x01\x12S\n" +
+	"\x03Get\x12\".archeic.v1.MediaServiceGetRequest\x1a#.archeic.v1.MediaServiceGetResponse\"\x03\x90\x02\x01\x12Y\n" +
+	"\x06Delete\x12%.archeic.v1.MediaServiceDeleteRequest\x1a&.archeic.v1.MediaServiceDeleteResponse\"\x00B\x9f\x01\n" +
 	"\x0ecom.archeic.v1B\n" +
 	"MediaProtoP\x01Z8github.com/yumikokawaii/archeic/gen/archeic/v1;archeicv1\xa2\x02\x03AXX\xaa\x02\n" +
 	"Archeic.V1\xca\x02\n" +
@@ -467,28 +466,28 @@ func file_archeic_v1_media_proto_rawDescGZIP() []byte {
 var file_archeic_v1_media_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_archeic_v1_media_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_archeic_v1_media_proto_goTypes = []any{
-	(Kind)(0),                     // 0: archeic.v1.Kind
-	(*Media)(nil),                 // 1: archeic.v1.Media
-	(*ListRequest)(nil),           // 2: archeic.v1.ListRequest
-	(*ListResponse)(nil),          // 3: archeic.v1.ListResponse
-	(*GetRequest)(nil),            // 4: archeic.v1.GetRequest
-	(*GetResponse)(nil),           // 5: archeic.v1.GetResponse
-	(*DeleteRequest)(nil),         // 6: archeic.v1.DeleteRequest
-	(*DeleteResponse)(nil),        // 7: archeic.v1.DeleteResponse
-	(*timestamppb.Timestamp)(nil), // 8: google.protobuf.Timestamp
+	(Kind)(0),                          // 0: archeic.v1.Kind
+	(*Media)(nil),                      // 1: archeic.v1.Media
+	(*MediaServiceListRequest)(nil),    // 2: archeic.v1.MediaServiceListRequest
+	(*MediaServiceListResponse)(nil),   // 3: archeic.v1.MediaServiceListResponse
+	(*MediaServiceGetRequest)(nil),     // 4: archeic.v1.MediaServiceGetRequest
+	(*MediaServiceGetResponse)(nil),    // 5: archeic.v1.MediaServiceGetResponse
+	(*MediaServiceDeleteRequest)(nil),  // 6: archeic.v1.MediaServiceDeleteRequest
+	(*MediaServiceDeleteResponse)(nil), // 7: archeic.v1.MediaServiceDeleteResponse
+	(*timestamppb.Timestamp)(nil),      // 8: google.protobuf.Timestamp
 }
 var file_archeic_v1_media_proto_depIdxs = []int32{
 	0, // 0: archeic.v1.Media.kind:type_name -> archeic.v1.Kind
 	8, // 1: archeic.v1.Media.create_time:type_name -> google.protobuf.Timestamp
-	0, // 2: archeic.v1.ListRequest.kind:type_name -> archeic.v1.Kind
-	1, // 3: archeic.v1.ListResponse.media:type_name -> archeic.v1.Media
-	1, // 4: archeic.v1.GetResponse.media:type_name -> archeic.v1.Media
-	2, // 5: archeic.v1.MediaService.List:input_type -> archeic.v1.ListRequest
-	4, // 6: archeic.v1.MediaService.Get:input_type -> archeic.v1.GetRequest
-	6, // 7: archeic.v1.MediaService.Delete:input_type -> archeic.v1.DeleteRequest
-	3, // 8: archeic.v1.MediaService.List:output_type -> archeic.v1.ListResponse
-	5, // 9: archeic.v1.MediaService.Get:output_type -> archeic.v1.GetResponse
-	7, // 10: archeic.v1.MediaService.Delete:output_type -> archeic.v1.DeleteResponse
+	0, // 2: archeic.v1.MediaServiceListRequest.kind:type_name -> archeic.v1.Kind
+	1, // 3: archeic.v1.MediaServiceListResponse.media:type_name -> archeic.v1.Media
+	1, // 4: archeic.v1.MediaServiceGetResponse.media:type_name -> archeic.v1.Media
+	2, // 5: archeic.v1.MediaService.List:input_type -> archeic.v1.MediaServiceListRequest
+	4, // 6: archeic.v1.MediaService.Get:input_type -> archeic.v1.MediaServiceGetRequest
+	6, // 7: archeic.v1.MediaService.Delete:input_type -> archeic.v1.MediaServiceDeleteRequest
+	3, // 8: archeic.v1.MediaService.List:output_type -> archeic.v1.MediaServiceListResponse
+	5, // 9: archeic.v1.MediaService.Get:output_type -> archeic.v1.MediaServiceGetResponse
+	7, // 10: archeic.v1.MediaService.Delete:output_type -> archeic.v1.MediaServiceDeleteResponse
 	8, // [8:11] is the sub-list for method output_type
 	5, // [5:8] is the sub-list for method input_type
 	5, // [5:5] is the sub-list for extension type_name

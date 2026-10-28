@@ -20,33 +20,33 @@ message Media {
 }
 
 service MediaService {
-  rpc List(ListRequest) returns (ListResponse) {
+  rpc List(MediaServiceListRequest) returns (MediaServiceListResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
-  rpc Get(GetRequest) returns (GetResponse) {
+  rpc Get(MediaServiceGetRequest) returns (MediaServiceGetResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
-  rpc Delete(DeleteRequest) returns (DeleteResponse) {}
+  rpc Delete(MediaServiceDeleteRequest) returns (MediaServiceDeleteResponse) {}
 }
 
-message ListRequest {
+message MediaServiceListRequest {
   Kind kind = 1;
 }
 
-message ListResponse {
+message MediaServiceListResponse {
   repeated Media media = 1;
 }
 
-message GetRequest {
+message MediaServiceGetRequest {
   string id = 1;
 }
 
-message GetResponse {
+message MediaServiceGetResponse {
   Media media = 1;
 }
 
-message DeleteRequest {
+message MediaServiceDeleteRequest {
   string id = 1;
 }
 
-message DeleteResponse {}
+message MediaServiceDeleteResponse {}

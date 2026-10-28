@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file archeic/v1/media.proto.
  */
 export const file_archeic_v1_media: GenFile = /*@__PURE__*/
-  fileDesc("ChZhcmNoZWljL3YxL21lZGlhLnByb3RvEgphcmNoZWljLnYxIpYBCgVNZWRpYRIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEh4KBGtpbmQYAyABKA4yEC5hcmNoZWljLnYxLktpbmQSFAoMY29udGVudF90eXBlGAQgASgJEgwKBHNpemUYBSABKAMSLwoLY3JlYXRlX3RpbWUYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIi0KC0xpc3RSZXF1ZXN0Eh4KBGtpbmQYASABKA4yEC5hcmNoZWljLnYxLktpbmQiMAoMTGlzdFJlc3BvbnNlEiAKBW1lZGlhGAEgAygLMhEuYXJjaGVpYy52MS5NZWRpYSIYCgpHZXRSZXF1ZXN0EgoKAmlkGAEgASgJIi8KC0dldFJlc3BvbnNlEiAKBW1lZGlhGAEgASgLMhEuYXJjaGVpYy52MS5NZWRpYSIbCg1EZWxldGVSZXF1ZXN0EgoKAmlkGAEgASgJIhAKDkRlbGV0ZVJlc3BvbnNlKjwKBEtpbmQSFAoQS0lORF9VTlNQRUNJRklFRBAAEg4KCktJTkRfSU1BR0UQARIOCgpLSU5EX1ZJREVPEAIyzgEKDE1lZGlhU2VydmljZRI+CgRMaXN0EhcuYXJjaGVpYy52MS5MaXN0UmVxdWVzdBoYLmFyY2hlaWMudjEuTGlzdFJlc3BvbnNlIgOQAgESOwoDR2V0EhYuYXJjaGVpYy52MS5HZXRSZXF1ZXN0GhcuYXJjaGVpYy52MS5HZXRSZXNwb25zZSIDkAIBEkEKBkRlbGV0ZRIZLmFyY2hlaWMudjEuRGVsZXRlUmVxdWVzdBoaLmFyY2hlaWMudjEuRGVsZXRlUmVzcG9uc2UiAGIGcHJvdG8z", [file_google_protobuf_timestamp]);
+  fileDesc("ChZhcmNoZWljL3YxL21lZGlhLnByb3RvEgphcmNoZWljLnYxIpYBCgVNZWRpYRIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEh4KBGtpbmQYAyABKA4yEC5hcmNoZWljLnYxLktpbmQSFAoMY29udGVudF90eXBlGAQgASgJEgwKBHNpemUYBSABKAMSLwoLY3JlYXRlX3RpbWUYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIjkKF01lZGlhU2VydmljZUxpc3RSZXF1ZXN0Eh4KBGtpbmQYASABKA4yEC5hcmNoZWljLnYxLktpbmQiPAoYTWVkaWFTZXJ2aWNlTGlzdFJlc3BvbnNlEiAKBW1lZGlhGAEgAygLMhEuYXJjaGVpYy52MS5NZWRpYSIkChZNZWRpYVNlcnZpY2VHZXRSZXF1ZXN0EgoKAmlkGAEgASgJIjsKF01lZGlhU2VydmljZUdldFJlc3BvbnNlEiAKBW1lZGlhGAEgASgLMhEuYXJjaGVpYy52MS5NZWRpYSInChlNZWRpYVNlcnZpY2VEZWxldGVSZXF1ZXN0EgoKAmlkGAEgASgJIhwKGk1lZGlhU2VydmljZURlbGV0ZVJlc3BvbnNlKjwKBEtpbmQSFAoQS0lORF9VTlNQRUNJRklFRBAAEg4KCktJTkRfSU1BR0UQARIOCgpLSU5EX1ZJREVPEAIylgIKDE1lZGlhU2VydmljZRJWCgRMaXN0EiMuYXJjaGVpYy52MS5NZWRpYVNlcnZpY2VMaXN0UmVxdWVzdBokLmFyY2hlaWMudjEuTWVkaWFTZXJ2aWNlTGlzdFJlc3BvbnNlIgOQAgESUwoDR2V0EiIuYXJjaGVpYy52MS5NZWRpYVNlcnZpY2VHZXRSZXF1ZXN0GiMuYXJjaGVpYy52MS5NZWRpYVNlcnZpY2VHZXRSZXNwb25zZSIDkAIBElkKBkRlbGV0ZRIlLmFyY2hlaWMudjEuTWVkaWFTZXJ2aWNlRGVsZXRlUmVxdWVzdBomLmFyY2hlaWMudjEuTWVkaWFTZXJ2aWNlRGVsZXRlUmVzcG9uc2UiAGIGcHJvdG8z", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message archeic.v1.Media
@@ -57,9 +57,9 @@ export const MediaSchema: GenMessage<Media> = /*@__PURE__*/
   messageDesc(file_archeic_v1_media, 0);
 
 /**
- * @generated from message archeic.v1.ListRequest
+ * @generated from message archeic.v1.MediaServiceListRequest
  */
-export type ListRequest = Message<"archeic.v1.ListRequest"> & {
+export type MediaServiceListRequest = Message<"archeic.v1.MediaServiceListRequest"> & {
   /**
    * @generated from field: archeic.v1.Kind kind = 1;
    */
@@ -67,16 +67,16 @@ export type ListRequest = Message<"archeic.v1.ListRequest"> & {
 };
 
 /**
- * Describes the message archeic.v1.ListRequest.
- * Use `create(ListRequestSchema)` to create a new message.
+ * Describes the message archeic.v1.MediaServiceListRequest.
+ * Use `create(MediaServiceListRequestSchema)` to create a new message.
  */
-export const ListRequestSchema: GenMessage<ListRequest> = /*@__PURE__*/
+export const MediaServiceListRequestSchema: GenMessage<MediaServiceListRequest> = /*@__PURE__*/
   messageDesc(file_archeic_v1_media, 1);
 
 /**
- * @generated from message archeic.v1.ListResponse
+ * @generated from message archeic.v1.MediaServiceListResponse
  */
-export type ListResponse = Message<"archeic.v1.ListResponse"> & {
+export type MediaServiceListResponse = Message<"archeic.v1.MediaServiceListResponse"> & {
   /**
    * @generated from field: repeated archeic.v1.Media media = 1;
    */
@@ -84,16 +84,16 @@ export type ListResponse = Message<"archeic.v1.ListResponse"> & {
 };
 
 /**
- * Describes the message archeic.v1.ListResponse.
- * Use `create(ListResponseSchema)` to create a new message.
+ * Describes the message archeic.v1.MediaServiceListResponse.
+ * Use `create(MediaServiceListResponseSchema)` to create a new message.
  */
-export const ListResponseSchema: GenMessage<ListResponse> = /*@__PURE__*/
+export const MediaServiceListResponseSchema: GenMessage<MediaServiceListResponse> = /*@__PURE__*/
   messageDesc(file_archeic_v1_media, 2);
 
 /**
- * @generated from message archeic.v1.GetRequest
+ * @generated from message archeic.v1.MediaServiceGetRequest
  */
-export type GetRequest = Message<"archeic.v1.GetRequest"> & {
+export type MediaServiceGetRequest = Message<"archeic.v1.MediaServiceGetRequest"> & {
   /**
    * @generated from field: string id = 1;
    */
@@ -101,16 +101,16 @@ export type GetRequest = Message<"archeic.v1.GetRequest"> & {
 };
 
 /**
- * Describes the message archeic.v1.GetRequest.
- * Use `create(GetRequestSchema)` to create a new message.
+ * Describes the message archeic.v1.MediaServiceGetRequest.
+ * Use `create(MediaServiceGetRequestSchema)` to create a new message.
  */
-export const GetRequestSchema: GenMessage<GetRequest> = /*@__PURE__*/
+export const MediaServiceGetRequestSchema: GenMessage<MediaServiceGetRequest> = /*@__PURE__*/
   messageDesc(file_archeic_v1_media, 3);
 
 /**
- * @generated from message archeic.v1.GetResponse
+ * @generated from message archeic.v1.MediaServiceGetResponse
  */
-export type GetResponse = Message<"archeic.v1.GetResponse"> & {
+export type MediaServiceGetResponse = Message<"archeic.v1.MediaServiceGetResponse"> & {
   /**
    * @generated from field: archeic.v1.Media media = 1;
    */
@@ -118,16 +118,16 @@ export type GetResponse = Message<"archeic.v1.GetResponse"> & {
 };
 
 /**
- * Describes the message archeic.v1.GetResponse.
- * Use `create(GetResponseSchema)` to create a new message.
+ * Describes the message archeic.v1.MediaServiceGetResponse.
+ * Use `create(MediaServiceGetResponseSchema)` to create a new message.
  */
-export const GetResponseSchema: GenMessage<GetResponse> = /*@__PURE__*/
+export const MediaServiceGetResponseSchema: GenMessage<MediaServiceGetResponse> = /*@__PURE__*/
   messageDesc(file_archeic_v1_media, 4);
 
 /**
- * @generated from message archeic.v1.DeleteRequest
+ * @generated from message archeic.v1.MediaServiceDeleteRequest
  */
-export type DeleteRequest = Message<"archeic.v1.DeleteRequest"> & {
+export type MediaServiceDeleteRequest = Message<"archeic.v1.MediaServiceDeleteRequest"> & {
   /**
    * @generated from field: string id = 1;
    */
@@ -135,23 +135,23 @@ export type DeleteRequest = Message<"archeic.v1.DeleteRequest"> & {
 };
 
 /**
- * Describes the message archeic.v1.DeleteRequest.
- * Use `create(DeleteRequestSchema)` to create a new message.
+ * Describes the message archeic.v1.MediaServiceDeleteRequest.
+ * Use `create(MediaServiceDeleteRequestSchema)` to create a new message.
  */
-export const DeleteRequestSchema: GenMessage<DeleteRequest> = /*@__PURE__*/
+export const MediaServiceDeleteRequestSchema: GenMessage<MediaServiceDeleteRequest> = /*@__PURE__*/
   messageDesc(file_archeic_v1_media, 5);
 
 /**
- * @generated from message archeic.v1.DeleteResponse
+ * @generated from message archeic.v1.MediaServiceDeleteResponse
  */
-export type DeleteResponse = Message<"archeic.v1.DeleteResponse"> & {
+export type MediaServiceDeleteResponse = Message<"archeic.v1.MediaServiceDeleteResponse"> & {
 };
 
 /**
- * Describes the message archeic.v1.DeleteResponse.
- * Use `create(DeleteResponseSchema)` to create a new message.
+ * Describes the message archeic.v1.MediaServiceDeleteResponse.
+ * Use `create(MediaServiceDeleteResponseSchema)` to create a new message.
  */
-export const DeleteResponseSchema: GenMessage<DeleteResponse> = /*@__PURE__*/
+export const MediaServiceDeleteResponseSchema: GenMessage<MediaServiceDeleteResponse> = /*@__PURE__*/
   messageDesc(file_archeic_v1_media, 6);
 
 /**
@@ -189,24 +189,24 @@ export const MediaService: GenService<{
    */
   list: {
     methodKind: "unary";
-    input: typeof ListRequestSchema;
-    output: typeof ListResponseSchema;
+    input: typeof MediaServiceListRequestSchema;
+    output: typeof MediaServiceListResponseSchema;
   },
   /**
    * @generated from rpc archeic.v1.MediaService.Get
    */
   get: {
     methodKind: "unary";
-    input: typeof GetRequestSchema;
-    output: typeof GetResponseSchema;
+    input: typeof MediaServiceGetRequestSchema;
+    output: typeof MediaServiceGetResponseSchema;
   },
   /**
    * @generated from rpc archeic.v1.MediaService.Delete
    */
   delete: {
     methodKind: "unary";
-    input: typeof DeleteRequestSchema;
-    output: typeof DeleteResponseSchema;
+    input: typeof MediaServiceDeleteRequestSchema;
+    output: typeof MediaServiceDeleteResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_archeic_v1_media, 0);
