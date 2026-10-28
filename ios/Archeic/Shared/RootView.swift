@@ -7,20 +7,45 @@ struct RootView: View {
 
     @State private var tab = 0
 
+    private let tabs = [("Home", "house.fill"), ("Library", "square.grid.2x2.fill"), ("Collections", "folder.fill")]
+
     var body: some View {
-        TabView(selection: $tab) {
-            Tab("Home", systemImage: "house.fill", value: 0) {
-                NavigationStack { HomeView(tab: $tab) }
-            }
-            Tab("Library", systemImage: "square.grid.2x2.fill", value: 1) {
-                NavigationStack { LibraryView() }
-            }
-            Tab("Collections", systemImage: "folder.fill", value: 2) {
-                NavigationStack { CollectionsView() }
-            }
+        ZStack {
+            page(0) { HomeView(tab: $tab) }
+            page(1) { LibraryView() }
+            page(2) { CollectionsView() }
+        }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if !model.tabsHidden { tabBar }
         }
         .overlay(alignment: .top) { banner }
         .background(Theme.bg.ignoresSafeArea())
+    }
+
+    private func page(_ index: Int, @ViewBuilder content: () -> some View) -> some View {
+        NavigationStack { content() }
+            .opacity(tab == index ? 1 : 0)
+            .allowsHitTesting(tab == index)
+    }
+
+    private var tabBar: some View {
+        HStack(spacing: 0) {
+            ForEach(tabs.indices, id: \.self) { i in
+                Button { tab = i } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: tabs[i].1).font(.system(size: 19, weight: .semibold))
+                        Text(tabs[i].0).font(.caption2.weight(.semibold))
+                    }
+                    .foregroundStyle(tab == i ? Theme.accent : Theme.muted)
+                    .frame(maxWidth: .infinity, minHeight: 50)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.top, 6)
+        .background(Theme.surface.ignoresSafeArea(edges: .bottom))
+        .overlay(alignment: .top) { Rectangle().fill(Theme.raised).frame(height: 1) }
     }
 
     @ViewBuilder

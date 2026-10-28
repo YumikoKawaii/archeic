@@ -35,7 +35,11 @@ struct MediaGrid: View {
                 grid(items)
             }
         }
-        .onChange(of: selecting) { _, on in if !on { selected = [] } }
+        .onChange(of: selecting) { _, on in
+            if !on { selected = [] }
+            model.tabsHidden = on
+        }
+        .onDisappear { if selecting { model.tabsHidden = false } }
         .onChange(of: items, initial: true) { _, list in
             if grouped { sections = groupByDay(list) }
         }
@@ -58,9 +62,7 @@ struct MediaGrid: View {
             if selecting {
                 ToolbarItemGroup(placement: .bottomBar) { selectionBar }
             }
-        }
-        .toolbar(selecting ? .hidden : .visible, for: .tabBar)
-    }
+        }    }
 
     private func grid(_ list: [Media]) -> some View {
         LazyVGrid(columns: columns, spacing: 2) {

@@ -29,6 +29,7 @@ struct PickedFile: Transferable {
 @Observable
 final class AppModel {
     var connected = false
+    var tabsHidden = false
     var version = 0
     var notice: String?
     var uploading: (done: Int, total: Int)?
