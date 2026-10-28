@@ -1,6 +1,6 @@
 # archeic
 
-Media and storage player. `server/` is Go + MySQL + RustFS (S3-compatible), `presentation/` is React + Vite + TypeScript. No authentication.
+Media and storage player. `server/` is Go + MySQL + RustFS (S3-compatible), `ios/` is the native SwiftUI client, `proxy/` is the nginx TLS front. No authentication. The server is LAN-only.
 
 # Coding rules
 
@@ -120,22 +120,6 @@ Media and storage player. `server/` is Go + MySQL + RustFS (S3-compatible), `pre
 - Prefer the standard library. Add a module only when it removes real complexity.
 - Run `go mod tidy` after changing imports.
 
-## Presentation
-
-- Visual style is Gallery minimal, dark: near-black background, media edge to edge in justified rows with 3px gaps, almost no chrome, names only on hover, one light-blue accent for primary actions, Figtree type. Colors come from the tokens in `src/styles.css`; no new literal colors.
-- Function components with hooks; strict TypeScript, no `any`.
-- All API calls go through `src/api/client.ts` using the generated Connect-ES client (`@connectrpc/connect-web`).
-- Source layout under `presentation/src/`:
-  - `main.tsx`, `App.tsx`: entry and top-level shell only.
-  - `api/`: the API client. `gen/`: generated code, never edited.
-  - `layout/`: app chrome (sidebar, header pieces).
-  - `features/<area>/`: one folder per area (`library`, `category`, `collection`, `media`) holding its views and the components only it uses.
-  - `components/`: small components shared by more than one feature.
-  - `lib/`: non-UI helpers and shared types.
-  - `styles/`: global CSS.
-- Never put new files directly in `src/`; place them in the folder that matches their role.
-- Media is loaded from `/api/media/{id}/content`; never point the browser directly at object storage.
-
 ## Git
 
 - One commit per noticeable change: a single feature, fix, or refactor that can be reviewed and measured on its own.
@@ -147,12 +131,12 @@ Media and storage player. `server/` is Go + MySQL + RustFS (S3-compatible), `pre
 ## Running
 
 - Copy `.env.example` to `.env` and fill in credentials; `.env` is git-ignored and `docker-compose.yml` reads every secret from it. Never commit real credentials.
-- `docker compose up -d --build` in `archeic/`; the `migrate` service runs `migrate up` before `server` starts. App on `https://localhost:8443` (HTTP/2 over TLS; `:8080` redirects there), RustFS console on `http://localhost:9001`.
+- `docker compose up -d --build` in `archeic/`; the `migrate` service runs `migrate up` before `server` starts. API on `https://<lan-ip>:8443` through `proxy` (HTTP/2 over TLS; `:8080` redirects there and serves `/ca.crt`), RustFS console on `http://localhost:9001`.
 - TLS: nginx reads `certs/server.crt` and `certs/server.key` (git-ignored), signed by a local CA in `certs/ca.crt`. Devices must trust `ca.crt` to load the app.
 
 ## iOS
 
-- `ios/` is the native SwiftUI app (iOS 26+, Swift 6). It replaces `presentation/` as the client.
+- `ios/` is the native SwiftUI app (iOS 26+, Swift 6) and the only client.
 - Talks to the server through nginx using the Connect JSON protocol in `ios/Archeic/API/Client.swift`; media loads from `/api/media/{id}/content`.
 - Source layout under `ios/Archeic/`: `API/`, `Shared/` (theme, thumbnails, app model, root view), `Features/<area>/`.
-- Server address is set in the app's Settings; devices must trust `certs/ca.crt`.
+- The app asks for the server address every time it launches, prefilled with the last one; devices must trust `certs/ca.crt`.

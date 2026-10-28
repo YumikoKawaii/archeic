@@ -48,13 +48,14 @@ services:
       rustfs:
         condition: service_started
 
-  presentation:
-    build: ./presentation
+  proxy:
+    image: nginx:1.27-alpine
     ports:
       - "8080:80"
       - "8443:443"
     volumes:
       - ./certs:/etc/nginx/certs:ro
+      - ./proxy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
       - server
 
