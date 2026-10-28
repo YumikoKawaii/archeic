@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from "react";
 import { contentUrl, Kind, type Media } from "../../api/client";
 import { ConfirmButton } from "../../components";
+import ZoomImage from "./ZoomImage";
 
 interface Props {
   media: Media;
@@ -26,7 +27,7 @@ export default function Viewer({ media, extra, onClose, onPrev, onNext, onDelete
     <div className="viewer" onClick={onClose}>
       <div className="stage" onClick={(e) => e.stopPropagation()}>
         {media.kind === Kind.IMAGE ? (
-          <img src={contentUrl(media.id)} alt={media.name} />
+          <ZoomImage key={media.id} src={contentUrl(media.id)} alt={media.name} />
         ) : (
           <video key={media.id} src={contentUrl(media.id)} controls autoPlay />
         )}

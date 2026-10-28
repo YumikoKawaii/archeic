@@ -347,7 +347,51 @@ button.danger.armed { background: var(--danger); color: var(--bg); border-color:
 
 .stage { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 0; }
 
-.stage img, .stage video { max-width: 100%; max-height: 100%; }
+.stage video { max-width: 100%; max-height: 100%; }
+
+.zoom {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  touch-action: none;
+  cursor: zoom-in;
+}
+
+.zoom.zoomed { cursor: grab; }
+
+.zoom.zoomed:active { cursor: grabbing; }
+
+.zoom img {
+  max-width: 100%;
+  max-height: 100%;
+  user-select: none;
+  transform-origin: center;
+  will-change: transform;
+}
+
+.zoom-ctrl {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  color: var(--text);
+  cursor: default;
+}
+
+.zoom-ctrl button { width: 36px; height: 36px; border-radius: 999px; font-size: 18px; }
+
+.zoom-ctrl button:hover:not(:disabled) { background: var(--raised); }
+
+.zoom-ctrl .zoom-level { width: auto; padding: 0 8px; font-size: 12px; font-variant-numeric: tabular-nums; }
 
 .bar {
   display: flex;
