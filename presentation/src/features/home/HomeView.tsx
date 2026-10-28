@@ -53,7 +53,8 @@ export default function HomeView({ version, onNavigate }: Props) {
           <span className="eyebrow">{hello}</span>
           <h1 className="wordmark">archeic</h1>
           <p className="hero-stats">
-            <b>{photos.length}</b> photos <i /> <b>{videos}</b> videos <i /> <b>{collections.length}</b> collections
+            <b>{photos.length}</b> {photos.length === 1 ? "photo" : "photos"} <i /> <b>{videos}</b> {videos === 1 ? "video" : "videos"} <i />{" "}
+            <b>{collections.length}</b> {collections.length === 1 ? "collection" : "collections"}
           </p>
           {since && <p className="hero-since">Archiving since {since}</p>}
         </div>
@@ -69,11 +70,11 @@ export default function HomeView({ version, onNavigate }: Props) {
       <div className="home-actions">
         <button type="button" className="glass-card" onClick={() => onNavigate({ kind: "library" })}>
           <Icon name="library" />
-          <span><b>Library</b><small>{media.length} items</small></span>
+          <span><b>Library</b><small>{plural(media.length, "item")}</small></span>
         </button>
         <button type="button" className="glass-card" onClick={() => onNavigate({ kind: "browse" })}>
           <Icon name="collections" />
-          <span><b>Collections</b><small>{collections.length} albums</small></span>
+          <span><b>Collections</b><small>{plural(collections.length, "album")}</small></span>
         </button>
       </div>
 
@@ -109,6 +110,10 @@ export default function HomeView({ version, onNavigate }: Props) {
       )}
     </section>
   );
+}
+
+function plural(n: number, word: string): string {
+  return `${n} ${word}${n === 1 ? "" : "s"}`;
 }
 
 function greeting(h: number): string {
