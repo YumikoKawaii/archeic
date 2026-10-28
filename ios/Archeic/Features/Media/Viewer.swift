@@ -49,7 +49,13 @@ struct Viewer: View {
         .statusBarHidden(!chrome)
         .presentationBackground(.clear)
         .onAppear { current = start.id }
-        .onChange(of: current) { zoomed = false }
+        .onChange(of: current) {
+            zoomed = false
+            playing = false
+        }
+        .onChange(of: playing) { _, on in
+            withAnimation(.easeOut(duration: 0.2)) { chrome = !on }
+        }
         .sheet(isPresented: $info) {
             if let media { InfoSheet(media: media).presentationDetents([.medium]) }
         }
@@ -124,9 +130,7 @@ struct Viewer: View {
                 }
             }
             .buttonStyle(.plain)
-            if !(media?.isVideo == true && playing) {
-                Filmstrip(items: items, current: $current)
-            }
+            Filmstrip(items: items, current: $current)
         }
         .foregroundStyle(.white)
         .padding(.top, 24)
