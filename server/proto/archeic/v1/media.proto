@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package archeic.v1;
+
+import "google/protobuf/timestamp.proto";
+
+enum Kind {
+  KIND_UNSPECIFIED = 0;
+  KIND_IMAGE = 1;
+  KIND_VIDEO = 2;
+}
+
+message Media {
+  string id = 1;
+  string name = 2;
+  Kind kind = 3;
+  string content_type = 4;
+  int64 size = 5;
+  google.protobuf.Timestamp create_time = 6;
+}
+
+service MediaService {
+  rpc List(ListRequest) returns (ListResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+  rpc Get(GetRequest) returns (GetResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+  rpc Delete(DeleteRequest) returns (DeleteResponse) {}
+}
+
+message ListRequest {
+  Kind kind = 1;
+}
+
+message ListResponse {
+  repeated Media media = 1;
+}
+
+message GetRequest {
+  string id = 1;
+}
+
+message GetResponse {
+  Media media = 1;
+}
+
+message DeleteRequest {
+  string id = 1;
+}
+
+message DeleteResponse {}
