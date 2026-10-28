@@ -100,7 +100,8 @@ Media and storage player. `server/` is Go + MySQL + MinIO, `presentation/` is Re
 - Use `LockX` methods (`SELECT ... FOR UPDATE`) inside `Tx` when a read decides a write.
 - Business rules (validation, ordering, hierarchy checks) live in the caller (`api`) or in `model`, not in repositories.
 - Side effects outside MySQL (MinIO) run last inside the `Tx` closure so a failure rolls the database back.
-- Schema changes go through `Migrate`, idempotent (`IF NOT EXISTS`).
+- Schema changes are SQL files in `server/migrations/`, run with golang-migrate: `NNNNNN_<description>.up.sql` plus a matching `.down.sql`, one change per file, never edit an applied migration.
+- Apply with `archeic migrate up` (roll back with `archeic migrate down`); the server never migrates on start.
 
 ### Storage
 
@@ -134,4 +135,4 @@ Media and storage player. `server/` is Go + MySQL + MinIO, `presentation/` is Re
 
 ## Running
 
-- `docker compose up -d --build` in `archeic/`. App on `http://localhost:8080`, MinIO console on `http://localhost:9001`.
+- `docker compose up -d --build` in `archeic/`; the `migrate` service runs `migrate up` before `server` starts. App on `http://localhost:8080`, MinIO console on `http://localhost:9001`.

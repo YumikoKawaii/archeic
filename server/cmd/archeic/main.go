@@ -1,37 +1,62 @@
 package main
 
 import (
-	"context"
 	"log/slog"
 	"net/http"
 	"os"
 
+	"github.com/urfave/cli/v2"
 	"github.com/yumikokawaii/archeic/internal/api"
 	"github.com/yumikokawaii/archeic/internal/config"
 	"github.com/yumikokawaii/archeic/internal/repository"
 	"github.com/yumikokawaii/archeic/internal/storage"
 )
 
+var (
+	cfg = config.Load()
+	log = slog.New(slog.NewJSONHandler(os.Stdout, nil))
+)
+
 func main() {
-	log := slog.New(slog.NewJSONHandler(os.Stdout, nil))
-	if err := run(context.Background(), log); err != nil {
+	app := &cli.App{
+		Name: "archeic",
+		Commands: []*cli.Command{
+			{
+				Name:   "server",
+				Usage:  "start the http server",
+				Action: serverAction,
+			},
+			{
+				Name:  "migrate",
+				Usage: "run database migrations",
+				Subcommands: []*cli.Command{
+					{
+						Name:   "up",
+						Usage:  "apply all pending migrations",
+						Action: migrateAction("up"),
+					},
+					{
+						Name:   "down",
+						Usage:  "roll back all migrations",
+						Action: migrateAction("down"),
+					},
+				},
+			},
+		},
+	}
+	if err := app.Run(os.Args); err != nil {
 		log.Error("archeic stopped", "err", err)
 		os.Exit(1)
 	}
 }
 
-func run(ctx context.Context, log *slog.Logger) error {
-	cfg := config.Load()
-
+func serverAction(c *cli.Context) error {
+	ctx := c.Context
 	db, err := repository.Open(cfg.MySQLDSN)
 	if err != nil {
 		return err
 	}
 	defer db.Close()
-
-	if err := repository.Migrate(ctx, db); err != nil {
-		return err
-	}
 
 	blobs, err := storage.New(ctx, cfg)
 	if err != nil {
@@ -49,4 +74,21 @@ func run(ctx context.Context, log *slog.Logger) error {
 	}
 	log.Info("archeic listening", "addr", cfg.Addr)
 	return srv.ListenAndServe()
+}
+
+func migrateAction(direction string) cli.ActionFunc {
+	return func(*cli.Context) error {
+		db, err := repository.Open(cfg.MySQLDSN)
+		if err != nil {
+			return err
+		}
+		defer db.Close()
+
+		log.Info("running migrations", "direction", direction, "dir", cfg.MigrationsDir)
+		if err := repository.Migrate(db, cfg.MigrationsDir, direction); err != nil {
+			return err
+		}
+		log.Info("migrations completed", "direction", direction)
+		return nil
+	}
 }

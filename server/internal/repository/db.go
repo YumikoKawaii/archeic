@@ -8,6 +8,9 @@ import (
 	"time"
 
 	"github.com/go-sql-driver/mysql"
+	"github.com/golang-migrate/migrate/v4"
+	migratemysql "github.com/golang-migrate/migrate/v4/database/mysql"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 var (
@@ -45,11 +48,25 @@ func Open(dsn string) (*sql.DB, error) {
 	return nil, fmt.Errorf("pinging mysql: %w", err)
 }
 
-func Migrate(ctx context.Context, db DBTX) error {
-	for _, stmt := range schema {
-		if _, err := db.ExecContext(ctx, stmt); err != nil {
-			return fmt.Errorf("migrating: %w", err)
-		}
+func Migrate(db *sql.DB, dir, direction string) error {
+	driver, err := migratemysql.WithInstance(db, &migratemysql.Config{})
+	if err != nil {
+		return fmt.Errorf("creating mysql driver: %w", err)
+	}
+	m, err := migrate.NewWithDatabaseInstance("file://"+dir, "mysql", driver)
+	if err != nil {
+		return fmt.Errorf("creating migrate instance: %w", err)
+	}
+	switch direction {
+	case "up":
+		err = m.Up()
+	case "down":
+		err = m.Down()
+	default:
+		return fmt.Errorf("invalid migration direction: %s (use 'up' or 'down')", direction)
+	}
+	if err != nil && !errors.Is(err, migrate.ErrNoChange) {
+		return fmt.Errorf("migration %s failed: %w", direction, err)
 	}
 	return nil
 }
