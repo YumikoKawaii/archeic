@@ -1,4 +1,4 @@
-import { Icon } from "../components";
+import { Icon, type IconName } from "../components";
 import type { View } from "../lib/view";
 
 interface Props {
@@ -9,16 +9,18 @@ interface Props {
   onUpload: (files: FileList | null) => void;
 }
 
+const tabs: [View["kind"], IconName, string][] = [
+  ["home", "home", "Home"],
+  ["library", "library", "Library"],
+  ["browse", "collections", "Collections"],
+];
+
 export default function TabBar({ view, busy, uploadLabel, onNavigate, onUpload }: Props) {
-  const inLibrary = view.kind === "library";
+  const current = view.kind === "category" || view.kind === "collection" ? "browse" : view.kind;
 
   return (
-    <nav className="tabbar" aria-label="Main">
-      <button type="button" className={inLibrary ? "tab on" : "tab"} onClick={() => onNavigate({ kind: "library" })}>
-        <Icon name="library" />
-        <span>Library</span>
-      </button>
-      <label className={busy ? "tab-upload busy" : "tab-upload"} aria-label={uploadLabel}>
+    <>
+      <label className={busy ? "fab busy" : "fab"} aria-label={uploadLabel}>
         {busy ? <span className="spinner" aria-hidden="true" /> : <Icon name="plus" size={26} />}
         <input
           id="upload-tab"
@@ -33,10 +35,19 @@ export default function TabBar({ view, busy, uploadLabel, onNavigate, onUpload }
           }}
         />
       </label>
-      <button type="button" className={!inLibrary ? "tab on" : "tab"} onClick={() => onNavigate({ kind: "browse" })}>
-        <Icon name="collections" />
-        <span>Collections</span>
-      </button>
-    </nav>
+      <nav className="tabbar" aria-label="Main">
+        {tabs.map(([kind, icon, label]) => (
+          <button
+            key={kind}
+            type="button"
+            className={current === kind ? "tab on" : "tab"}
+            onClick={() => onNavigate({ kind } as View)}
+          >
+            <Icon name={icon} />
+            <span>{label}</span>
+          </button>
+        ))}
+      </nav>
+    </>
   );
 }

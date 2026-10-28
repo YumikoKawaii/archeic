@@ -3,6 +3,7 @@ import { contentUrl, Kind, type Media } from "../api/client";
 import Icon, { type IconName } from "./Icon";
 
 export { Icon };
+export type { IconName };
 
 export function Thumb({ media }: { media: Media }) {
   return media.kind === Kind.IMAGE ? (
